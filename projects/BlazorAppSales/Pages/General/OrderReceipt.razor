@@ -1,0 +1,55 @@
+﻿@using BlazorAppSales.Data;
+
+
+<div class="receipt">
+    <h3>Order Receipt</h3>
+    <div class="order-details">
+        <div><strong>Order Number:</strong> @order.Id</div>
+        <div><strong>Invoice Number:</strong> @order.InvoiceNumber</div>
+        <div><strong>Date:</strong> @order.OrderDate</div>
+        @*<div><strong>Cashier:</strong> @order.Cashier</div>
+        <div><strong>Customer:</strong> @order.CustomerName</div>*@
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (order != null)
+                @if (order.Items != null)
+                    @foreach (var item in order.Items)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price</td>
+                            <td>@item.Total</td>
+                        </tr>
+                    }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                <td>@order.Total</td>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+
+
+
+
+@code {
+    [Parameter]
+    public Order order { get; set; } = new Order();
+
+    [Parameter] public EventCallback<Order> onClose { get; set; }
+
+
+}

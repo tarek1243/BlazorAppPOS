@@ -1,0 +1,102 @@
+﻿@page "/order-receipt/{orderId}"
+
+
+@*/order-receipt/1058
+https://localhost:7092/order-receipt/1058
+*@
+
+
+@using BlazorAppSales.Data;
+@using Microsoft.JSInterop;
+@using QRCoder;
+@using System.Drawing;
+
+@inject OrderService orderService
+@inject IJSRuntime Js
+
+
+<div id="section-to-print">
+    <button @onclick="PrintOrderSummary">Print Receipt</button>
+    @TableHeader
+</div>
+
+@code {
+    [Parameter]
+    public string orderIdx { get; set; }
+    //private Order order;
+    public RenderFragment? TableHeader { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        //order = await orderService.GetOrderById(int.Parse(orderId));
+        //TableHeader = GenerateReceipt(order);
+    }
+
+    private string GenerateQrCode(string data)
+    {
+
+        //QRCodeGenerator qrGenerator = new QRCodeGenerator();
+        //QRCodeData qrCodeData = qrGenerator.CreateQrCode("The text which should be encoded.", QRCodeGenerator.ECCLevel.Q);
+        //QRCoder.Unity.UnityQRCode qrCode = new QRCoder.Unity.UnityQRCode (qrCodeData);
+        //Bitmap qrCodeImage = qrCode.GetGraphic(20);
+
+
+        QRCodeGenerator qrGenerator = new QRCodeGenerator();
+        QRCodeData qrCodeData = qrGenerator.CreateQrCode(data, QRCodeGenerator.ECCLevel.Q);
+        QRCode qrCode = new QRCode(qrCodeData);
+        Bitmap qrCodeImage = qrCode.GetGraphic(5);
+
+        using MemoryStream ms = new MemoryStream();
+        //qrCodeImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        qrCodeImage.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
+        byte[] qrCodeBytes = ms.ToArray();
+        string qrCodeBase64 = Convert.ToBase64String(qrCodeBytes);
+        return $"data:image/png;base64,{qrCodeBase64}";
+    }
+
+    public RenderFragment GenerateReceipt(Order order)
+    {
+        return builder =>
+        {
+
+            builder.AddContent(4, "item.Product.Name");
+
+            if (order == null || order.Items == null)
+                return;
+            builder.OpenElement(0, "div");
+            builder.AddContent(1, "Order Details:");
+            builder.OpenElement(2, "ul");
+            if (order != null)
+                if (order.Items != null)
+                    foreach (var item in order.Items)
+                    {
+                        builder.OpenElement(3, "li");
+                        builder.AddContent(4, item.Product.Name);
+                        builder.CloseElement();
+                    }
+            builder.CloseElement();
+            builder.OpenElement(5, "img");
+
+            var saudiConvertion = new SaudiConvertion();
+            string encrypted_str = saudiConvertion.getBase64("sellerName", "310122393500003", order.OrderDate.ToString(), order.Total.ToString(), order.VAT_Amount.ToString());
+
+            builder.AddAttribute(6, "src", GenerateQrCode(encrypted_str));
+            builder.CloseElement();
+            builder.CloseElement();
+        };
+
+    }
+
+    public void doRerender(Order order)
+    {
+        TableHeader = GenerateReceipt(order);
+    }
+
+    private async Task PrintOrderSummary()
+    {
+        // Select the printable div
+        // var printableDiv = await JSRuntime.InvokeAsync<ElementReference>("document.querySelector", "#printableDiv");
+        // Open the print dialog and print the contents of the printable div
+        // await JSRuntime.InvokeVoidAsync("printJS", printableDiv.Id);
+        await Js.InvokeVoidAsync("printInvoke");
+    }
+}

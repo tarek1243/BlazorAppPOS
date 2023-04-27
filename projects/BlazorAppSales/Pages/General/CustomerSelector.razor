@@ -1,0 +1,179 @@
+﻿@using BlazorAppSales.Data;
+@using Microsoft.EntityFrameworkCore;
+
+
+<label for="searchh">Customer</label>
+<div class="input-group">
+    <input id="searchh" type="text" class="form-control" @bind-value="@searchText"  placeholder="SearchForCustomer"/>
+    <button class="btn btn-outline-secondary" @onclick="Search"><i class="fa fa-search"></i></button>
+</div>
+
+
+<div class="form-group">
+    @*<label for="customer">Customer:</label>*@
+    <select class="form-control" id="customer" @bind="SelectedCustomer">
+        <option value="">-- Select Customer --</option>
+        @foreach (var customer in Customers_filtered)
+        {
+            <option value="@customer">@customer.Name</option>
+        }
+    </select>
+
+    @if (entering_new_customer)
+    {
+        <div class="create-customer-form">
+            <h3>Create New Customer</h3>
+            <div class="form-group">
+                <label for="customer-name">Name:</label>
+                <input type="text" class="form-control" id="customer-name" @bind-value="newCustomer.Name" />
+            </div>
+            <div class="form-group">
+                <label for="customer-email">Email:</label>
+                <input type="email" class="form-control" id="customer-email" @bind-value="newCustomer.Email" />
+            </div>
+            <div class="form-group">
+                <label for="customer-phone">Phone:</label>
+                <input type="tel" class="form-control" id="customer-phone" @bind-value="newCustomer.Phone" />
+            </div>
+            <div class="form-group">
+                <button type="button" class="btn btn-primary" @onclick="save">save new Customer</button>
+                <button type="button" class="btn btn-secondary" @onclick="CancelNewCustomer">Cancel</button>
+            </div>
+        </div>
+    }
+    else
+    {
+        <button type="button" class="btn btn-primary" @onclick="startCreateNewCustomer">New</button>
+    }
+  
+</div>
+
+
+
+
+
+
+
+@*@bind="@selectedCustomerId"*@
+
+@*<InputList      TItem="Customer" ValueField="@nameof(Customer.Id)" TextField="@nameof(Customer.Name)" SearchMethod="@SearchCustomers">
+    <InputListContent>
+        <div class="dropdown-item" @onclick="@(() => SelectCustomer(null))">
+            New Customer
+        </div>
+        @foreach (var customer in searchedCustomers)
+        {
+            <div class="dropdown-item" @onclick="@(() => SelectCustomer(customer))">
+                @customer.Name
+            </div>
+        }
+    </InputListContent>
+</InputList>
+*@
+
+
+
+@code {
+
+    //private async Task<IEnumerable<Customer>> SearchCustomers(string searchTerm)
+    //{
+    //    if (string.IsNullOrEmpty(searchTerm))
+    //        return null;
+
+    //    return await dbContext.Customers
+    //        .Where(c => c.Name.Contains(searchTerm) || c.Id.ToString().Contains(searchTerm))
+    //        .ToListAsync();
+    //}
+    //private void SelectCustomer(Customer customer)
+    //{
+    //    if (customer == null)
+    //    {
+    //        // Create new customer
+    //        selectedCustomer = new Customer();
+    //    }
+    //    else
+    //    {
+    //        // Select existing customer
+    //        selectedCustomer = customer;
+    //    }
+    //    selectedCustomerId = selectedCustomer.Id;
+    //}
+
+    //DbContextMainData dbContext = new DbContextMainData();
+    //Customer selectedCustomer = new Customer();
+    //int selectedCustomerId=0 ;
+    //public List<Customer> searchedCustomers { get; set; } = new List<Customer>(); 
+
+
+
+
+
+    private string searchText = "";
+    private async Task Search()
+    {
+        if (string.IsNullOrEmpty(searchText))
+        {
+            Customers_filtered = Customers_full; //await CustomerService.GetAllCustomersAsync();
+        }
+        else
+        {
+            Customers_filtered = Customers_full.Where(c => c.Name.Contains(searchText)).ToList();// await CustomerService.SearchCustomersAsync(SearchText);
+        }
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        //searchedCustomers = dbContext.Customers.ToList();
+        Customers_filtered = Customers_full; //await CustomerService.GetAllCustomersAsync();
+    }
+
+    [Parameter]
+    public List<Customer> Customers_full { get; set; }
+    public List<Customer> Customers_filtered { get; set; }
+    // public Customer SelectedCustomer { get { } set { } }
+
+    public Customer _SelectedCustomer { get; set; }
+    public Customer SelectedCustomer { get { return _SelectedCustomer; } set { _SelectedCustomer = value; OnNewCustomerCreated.InvokeAsync(value); } }
+    public Customer newCustomer { get; set; }
+    bool entering_new_customer = false; 
+
+    private void save()
+    {
+        DbContextMainData DbContextMainData = new DbContextMainData();
+        DbContextMainData.Customers.Attach(newCustomer);
+        DbContextMainData.SaveChanges();
+        endCreateNewCustomer();
+        OnNewCustomerCreated.InvokeAsync(newCustomer);
+
+    }
+
+    private void startCreateNewCustomer()
+    {
+        newCustomer = new Customer();
+        entering_new_customer = true; 
+    }
+
+    private void CancelNewCustomer()
+    {
+        entering_new_customer = false;
+    }
+    
+
+    private void endCreateNewCustomer()
+    {
+        entering_new_customer = false;
+        SelectedCustomer = newCustomer;
+    }
+    [Parameter]
+    public EventCallback<Customer> OnCustomerSelected { get; set; }
+
+    [Parameter]public EventCallback<Customer> OnNewCustomerCreated { get; set; }
+    
+    private void CreateNewCustomer()
+    {
+        var newCustomer = new Customer();
+        OnNewCustomerCreated.InvokeAsync(newCustomer);
+        SelectedCustomer = newCustomer;
+    }
+}

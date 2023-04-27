@@ -1,0 +1,49 @@
+﻿@page "/customers"
+@inject IJSRuntime jsRuntime
+
+@using BlazorAppSales.Data;
+@using Microsoft.AspNetCore.Components.Rendering;
+@using Microsoft.EntityFrameworkCore;
+
+
+<h3>Customers</h3>
+
+
+<div class="customers-list">
+    <h5>Customers</h5>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customer in customers)
+            {
+                <tr>
+                    <td>@customer.Name</td>
+                    <td>@customer.Email</td>
+                    <td>@customer.Phone</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
+
+@code {
+
+    DbContextMainData DbContext = new DbContextMainData();
+
+    private List<Customer> customers { get; set; } = new List<Customer>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        customers = DbContext.Customers.ToList();
+    }
+
+
+}
