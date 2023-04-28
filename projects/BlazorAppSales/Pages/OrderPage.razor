@@ -11,23 +11,21 @@ https://localhost:7092/order-receipt/1058
 @using QRCoder;
 @using System.Drawing;
 
+
 @inject OrderService orderService
 @inject IJSRuntime Js
 
-
-<button @onclick="PrintOrderSummary">Print Receipt</button>
-
-
-
-
-
+@if (order != null)
+    @if (order.Total!=0)
+    {
+        <button class="print-button" @onclick="PrintOrderSummary" >Print</button>
 
 <div id="section-to-print">
-    @if (order != null)
-    {
+   
 
         <div class="receipt">
             <h3>Order Receipt</h3>
+            <h3>@order.company_name</h3>
             <div class="order-details">
                 <div><strong>Order Number:</strong> @order.Id</div>
                 <div><strong>Invoice Number:</strong> @order.InvoiceNumber</div>
@@ -67,11 +65,11 @@ https://localhost:7092/order-receipt/1058
         </div>
 
 
-    }
-
+   
 
     @TableHeader
 </div>
+}
 
 @code {
   

@@ -18,7 +18,7 @@ namespace ClassLibraryModels
         public string VAT_number { get; set; } = "";
         public bool isActive { get; set; } = true;
         public string branch { get; set; } = "";
-        public byte[] logo { get; set; }
+        public byte[]? logo { get; set; }
 
 
     }

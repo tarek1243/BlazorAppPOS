@@ -9,31 +9,11 @@
 @inject IJSRuntime JsRuntime
 @inject AuthenticationStateProvider authenticationStateProvider
 
-<div class="radio-group">
-@*    <label>
-        <input type="radio" name="option" value="option1">
-        <span class="button"></span>
-        Option 1
-    </label>
-    <label>
-        <input type="radio" name="option" value="option2">
-        <span class="button"></span>
-        Option 2
-    </label>
 
-    checked="@(SelectedValue.Equals(CurrentValueAsString))"
 
-    *@
-    @foreach (var tag_name_str in productTags)
-    {
-        <label>
-            <input type="radio" name="option" value="@tag_name_str"
-               @onchange="(()=>OnChange_selectedTagFilter(tag_name_str))">
-            <span class="button p-1 ">    &nbsp; &nbsp; &nbsp;                 @tag_name_str</span>
-            
-        </label>
-    }
-</div>
+
+
+
 
 
 
@@ -74,8 +54,6 @@ else
             <div class="card">
                 <div class="card-body" style=" overflow: auto;">
                     <div class="input-group mb-3">
-
-
                     </div>
                     <div class="row">
                         <div class="col-md-8">
@@ -83,11 +61,19 @@ else
 
                             <input type="text" class="form-control" placeholder="Search by product name or number" @bind="@searchQuery_item"
                                @oninput="(e)=> searchQuery_item = e.Value.ToString()"
-                         @onkeydown="Search"
-                         
-                         />
+                               @onkeydown="Search" />
 
+                            <div class="radio-group">
 
+                                @foreach (var tag_name_str in productTags)
+                                {
+                                    <label>
+                                        <input type="radio" name="option" value="@tag_name_str"
+                                       @onchange="(()=>OnChange_selectedTagFilter(tag_name_str))">
+                                        <span class="button p-1 ">    &nbsp; &nbsp; &nbsp;                 @tag_name_str</span>
+                                    </label>
+                                }
+                            </div>
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -97,17 +83,17 @@ else
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (Products!=null)
-                                    @foreach (var product in Products)
-                                    {
-                                        <tr>
-                                            <td>@product.Name</td>
-                                            <td>@product.Price.ToString("C")</td>
-                                            <td>
-                                                <button class="btn btn-primary" @onclick="() => AddToCart(product)"> + </button>
-                                            </td>
-                                        </tr>
-                                    }
+                                    @if (Products != null)
+                                        @foreach (var product in Products)
+                                        {
+                                            <tr>
+                                                <td>@product.Name</td>
+                                                <td>@product.Price.ToString("C")</td>
+                                                <td>
+                                                    <button class="btn btn-primary" @onclick="() => AddToCart(product)"> + </button>
+                                                </td>
+                                            </tr>
+                                        }
                                 </tbody>
                             </table>
                         </div>
@@ -124,15 +110,15 @@ else
                                 </thead>
                                 <tbody>
                                     @if (Cart != null)
-                                    @foreach (var item in Cart)
-                                    {
-                                        <tr>
-                                            <td>@item.Product.Name</td>
-                                            <td>@item.Product.Price.ToString("C")</td>
-                                            <td>@item.Quantity</td>
-                                            <td>@((item.Quantity * item.Product.Price).ToString("C"))</td>
-                                        </tr>
-                                    }
+                                        @foreach (var item in Cart)
+                                        {
+                                            <tr>
+                                                <td>@item.Product.Name</td>
+                                                <td>@item.Product.Price.ToString("C")</td>
+                                                <td>@item.Quantity</td>
+                                                <td>@((item.Quantity * item.Product.Price).ToString("C"))</td>
+                                            </tr>
+                                        }
                                     <tr>
                                         <td colspan="3">Total</td>
                                         <td>@Total.ToString("C")</td>
@@ -141,13 +127,13 @@ else
                             </table>
 
 
-                   @*   temppppp     *@  
+                            @*   temppppp     *@
                             <div class="form-group">
                                 <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1))" disabled="@(!Cart.Any() || ShiftClosed)">Place Order</button>
                             </div>
 
-                      
-                            
+
+
 
                             @if (ShiftClosed)
                             {
@@ -181,14 +167,14 @@ else
                     </div>
 
 
-           @*         <label for="customerSelect">Select customer:</label>
-                    <select id="customerSelect" @bind="selectedCustomer">
-                        <option value="">-- Select --</option>
-                        @foreach (var customer in customers)
-                        {
-                            <option value="@customer">@customer.Name</option>
-                        }
-                    </select>*@
+                    @*         <label for="customerSelect">Select customer:</label>
+                <select id="customerSelect" @bind="selectedCustomer">
+                <option value="">-- Select --</option>
+                @foreach (var customer in customers)
+                {
+                <option value="@customer">@customer.Name</option>
+                }
+                </select>*@
                     <CustomerSelector Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
                 </div>
             </div>
@@ -202,7 +188,7 @@ else
 }*@
 
 
-@code{
+@code {
 
     string selectedTagFilter = "";
     private void OnChange_selectedTagFilter(string selected)
@@ -210,4 +196,4 @@ else
         selectedTagFilter = selected;
         Search();
     }
-            }
+}
