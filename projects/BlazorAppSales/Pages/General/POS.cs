@@ -3,6 +3,8 @@ using BlazorAppSales.Data;
 using ClassLibraryModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
+using MyApp.Services;
+using System.Linq;
 
 namespace BlazorAppSales.Pages.General
 {
@@ -12,7 +14,7 @@ namespace BlazorAppSales.Pages.General
 
         private bool ShiftIsOpen { get { return !ShiftClosed; } set { ShiftClosed = !value; } } //= false;
 
-        private string searchQuery = string.Empty;
+        private string searchQuery_item = string.Empty;
         Order CurrentOrder = new Order();
         bool ShowReceipt = true;
         private List<Product> ProductsAll { get; set; }
@@ -20,6 +22,9 @@ namespace BlazorAppSales.Pages.General
         private List<Order> Orders { get; set; }
         private List<CartItem> Cart { get; set; }
         private List<Customer> customers { get; set; } = new List<Customer>();
+
+        List<string> productTags = new List<string>();
+
         private decimal Total { get; set; }
         private bool ShiftClosed { get; set; } = true;
         private decimal ShiftTotalSales { get; set; }
@@ -57,15 +62,28 @@ namespace BlazorAppSales.Pages.General
         {
             currentUser = await Util .ClassCurrentSessionUtil.GetUser(authenticationStateProvider, applicationDbContext);
             currentUserEmail = currentUser.Email;//  await ClassCurrentSessionUtil.GetUserEmail(authenticationStateProvider);
+            currentCompanyName = currentUser.CompanyName; 
             //isAdmin = await Util.ClassCurrentSessionUtil.CheckIfUserHasRole(authenticationStateProvider, applicationDbContext, "Admin");
         }
-       protected override async Task OnInitializedAsync()
+
+        private ProductService productService;
+  
+
+        protected override async Task OnInitializedAsync()
         {
             ProductsAll = DbContext.Products.ToList();
-            Products = DbContext.Products.ToList();
+            Products = DbContext.Products.Include(p=>p.ProductTags).ToList();
             Orders = DbContext.Orders.ToList();
             customers = DbContext.Customers.ToList();
             Cart = new List<CartItem>();
+
+
+            productService = new ProductService();
+
+           // productTags = await productService.GetProductsTagsAsync();
+           // productTags = await productService.GetProductsTagsLinkedWithProductsAsync();
+           var productTags_objects = await productService.GetProductTagsWithProducts();
+            productTags = productTags_objects.Select(t => t.Name).ToList();
             await ReadCurrent();
         }
         private void AddToCart(Product product)
@@ -73,13 +91,15 @@ namespace BlazorAppSales.Pages.General
             var cartItem = Cart.FirstOrDefault(item => item.Product.Id == product.Id);
             if (cartItem == null)
             {
-                cartItem = new CartItem { Product = product, Quantity = 1 };
+                cartItem = new CartItem { Product = product, Quantity = 1  , Price= product.Price};
                 Cart.Add(cartItem);
             }
             else
             {
                 cartItem.Quantity++;
             }
+
+            cartItem.Total = cartItem.Price * cartItem.Quantity;
 
             Total += product.Price;
         }
@@ -88,12 +108,16 @@ namespace BlazorAppSales.Pages.General
             // if (!string.IsNullOrEmpty(searchQuery))
             {
                 // Filter items based on search query
-                Products = ProductsAll.Where(i => i.Name.Contains(searchQuery, StringComparison.OrdinalIgnoreCase) || i.Number.Contains(searchQuery, StringComparison.OrdinalIgnoreCase)).ToList();
+                Products = ProductsAll.Where(i => i.Name.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase) || i.Number.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)).ToList();
             }
+           if (selectedTagFilter != "")
+                // Assuming you have a list of products named 'products' and a string variable named 'tagName' for the tag you want to filter by
+                Products = Products.Where(p => p.ProductTags.Any(t => t.Name.Contains(selectedTagFilter))).ToList();
+
         }
         private void ClearSearch()
         {
-            searchQuery = string.Empty;
+            searchQuery_item = string.Empty;
             Search(); // Reload all items
         }
         private async Task OpenShift()
@@ -161,6 +185,8 @@ namespace BlazorAppSales.Pages.General
 
         }
         int currentCompanyId = 1;
+        int defaultCompanyId = 1;
+        string currentCompanyName = "";
 
         private OrderPage GetOrderPage1()
         {
@@ -179,7 +205,11 @@ namespace BlazorAppSales.Pages.General
 
 
 
-            var company = await DbContext.Companies.FindAsync(currentCompanyId);
+            //var company = await DbContext.Companies.FindAsync(currentCompanyId);
+            var company = await DbContext.Companies.Where(c => c.Name == currentCompanyName)
+                .FirstOrDefaultAsync();
+            if(company==null )
+                company = await DbContext.Companies.FindAsync(defaultCompanyId);
 
             // Get the last invoice number used for the company and increment it
             var companyInvoiceNumber = await DbContext.CompanyInvoiceNumbers
@@ -199,6 +229,7 @@ namespace BlazorAppSales.Pages.General
             order.CustomerId = selectedCustomer.Id;
             order.customer_name = selectedCustomer.Name;
             order.CompanyId = currentCompanyId;
+            order.company_name = currentCompanyName;
             order.OrderDate = DateTime.UtcNow;
 
             order.Total = order.Items.Sum(o => (o.Quantity * o.Product.Price));

@@ -1,3 +1,65 @@
+
+
+
+.radio-group {
+    display: flex;
+}
+
+    .radio-group label {
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .radio-group input[type=radio] {
+        position: absolute;
+        opacity: 0;
+    }
+
+    .radio-group .button {
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+        border-radius: 15px;
+        background-color: #ccc;
+    }
+
+    .radio-group input[type=radio]:checked + .button {
+        background-color: #007bff; /* change color to blue when selected */
+    }
+
+    .radio-group .button:before {
+        content: "";
+        display: block;
+        width: calc(50% - 5px);
+        height: calc(100% -10px);
+        border-radius: inherit;
+        background-color: #fff; /* add white circle inside button */
+        position: absolute;
+        left: -1px;
+        top: -1px;
+        transition: left .2s ease-out,background-color .2s ease-out
+    }
+
+    .radio-group input[type=radio]:checked + .button:before {
+        left: auto;
+        right: -1px;
+        background-color: #fff
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
 
 /*

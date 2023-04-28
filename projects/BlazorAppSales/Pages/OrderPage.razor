@@ -15,14 +15,66 @@ https://localhost:7092/order-receipt/1058
 @inject IJSRuntime Js
 
 
+<button @onclick="PrintOrderSummary">Print Receipt</button>
+
+
+
+
+
+
 <div id="section-to-print">
-    <button @onclick="PrintOrderSummary">Print Receipt</button>
+    @if (order != null)
+    {
+
+        <div class="receipt">
+            <h3>Order Receipt</h3>
+            <div class="order-details">
+                <div><strong>Order Number:</strong> @order.Id</div>
+                <div><strong>Invoice Number:</strong> @order.InvoiceNumber</div>
+                <div><strong>Date:</strong> @order.OrderDate</div>
+                @*<div><strong>Cashier:</strong> @order.Cashier</div>
+            <div><strong>Customer:</strong> @order.CustomerName</div>*@
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (order != null)
+                        @if (order.Items != null)
+                            @foreach (var item in order.Items)
+                            {
+                                <tr>
+                                    <td>@item.Product.Name</td>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Price</td>
+                                    <td>@item.Total</td>
+                                </tr>
+                            }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                        <td>@order.Total</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+
+    }
+
+
     @TableHeader
 </div>
 
 @code {
-    [Parameter]
-    public string orderIdx { get; set; }
+  
     //private Order order;
     public RenderFragment? TableHeader { get; set; }
     protected override async Task OnInitializedAsync()
@@ -52,28 +104,30 @@ https://localhost:7092/order-receipt/1058
         string qrCodeBase64 = Convert.ToBase64String(qrCodeBytes);
         return $"data:image/png;base64,{qrCodeBase64}";
     }
+    //Order order;
 
-    public RenderFragment GenerateReceipt(Order order)
+    public RenderFragment GenerateReceipt(Order order_parameter)
     {
+        order = order_parameter;
         return builder =>
         {
 
-            builder.AddContent(4, "item.Product.Name");
+            //builder.AddContent(4, "item.Product.Name");
 
             if (order == null || order.Items == null)
                 return;
             builder.OpenElement(0, "div");
-            builder.AddContent(1, "Order Details:");
-            builder.OpenElement(2, "ul");
-            if (order != null)
-                if (order.Items != null)
-                    foreach (var item in order.Items)
-                    {
-                        builder.OpenElement(3, "li");
-                        builder.AddContent(4, item.Product.Name);
-                        builder.CloseElement();
-                    }
-            builder.CloseElement();
+            //builder.AddContent(1, "Order Details:");
+            //builder.OpenElement(2, "ul");
+            //if (order != null)
+            //    if (order.Items != null)
+            //        foreach (var item in order.Items)
+            //        {
+            //            builder.OpenElement(3, "li");
+            //            builder.AddContent(4, item.Product.Name);
+            //            builder.CloseElement();
+            //        }
+            //builder.CloseElement();
             builder.OpenElement(5, "img");
 
             var saudiConvertion = new SaudiConvertion();
@@ -99,4 +153,10 @@ https://localhost:7092/order-receipt/1058
         // await JSRuntime.InvokeVoidAsync("printJS", printableDiv.Id);
         await Js.InvokeVoidAsync("printInvoke");
     }
+
+
+    [Parameter]
+    public Order order { get; set; } = new Order();
+
+    [Parameter] public EventCallback<Order> onClose { get; set; }
 }

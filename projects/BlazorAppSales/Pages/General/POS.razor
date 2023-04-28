@@ -9,6 +9,35 @@
 @inject IJSRuntime JsRuntime
 @inject AuthenticationStateProvider authenticationStateProvider
 
+<div class="radio-group">
+@*    <label>
+        <input type="radio" name="option" value="option1">
+        <span class="button"></span>
+        Option 1
+    </label>
+    <label>
+        <input type="radio" name="option" value="option2">
+        <span class="button"></span>
+        Option 2
+    </label>
+
+    checked="@(SelectedValue.Equals(CurrentValueAsString))"
+
+    *@
+    @foreach (var tag_name_str in productTags)
+    {
+        <label>
+            <input type="radio" name="option" value="@tag_name_str"
+               @onchange="(()=>OnChange_selectedTagFilter(tag_name_str))">
+            <span class="button p-1 ">    &nbsp; &nbsp; &nbsp;                 @tag_name_str</span>
+            
+        </label>
+    }
+</div>
+
+
+
+
 
 
 <h1>Point of Sale</h1>
@@ -27,17 +56,38 @@ else
 @if (ShiftIsOpen)
 {
     <div class="row" style=" border: 1px solid black; overflow: auto;">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Summary and other information here -->
+                    @*  <OrderReceipt order="CurrentOrder" onClose="@(() => ShowReceipt = false)" />*@
+                    @if (CurrentOrder != null)
+                    {
+                        <OrderPage order="CurrentOrder" onClose="@(() => ShowReceipt = false)"
+                           @ref="orderPage1" />
+                    }
+                </div>
+            </div>
+        </div>
+
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body" style=" overflow: auto;">
                     <div class="input-group mb-3">
-                        <input type="text" class="form-control" placeholder="Search by product name or number" @bind="@searchQuery"
-                           @oninput="(e)=> searchQuery = e.Value.ToString()"
-                         @onkeydown="Search" />
+
+
                     </div>
                     <div class="row">
                         <div class="col-md-8">
                             <h4>Products</h4>
+
+                            <input type="text" class="form-control" placeholder="Search by product name or number" @bind="@searchQuery_item"
+                               @oninput="(e)=> searchQuery_item = e.Value.ToString()"
+                         @onkeydown="Search"
+                         
+                         />
+
+
                             <table class="table table-striped">
                                 <thead>
                                     <tr>
@@ -54,7 +104,7 @@ else
                                             <td>@product.Name</td>
                                             <td>@product.Price.ToString("C")</td>
                                             <td>
-                                                <button class="btn btn-primary" @onclick="() => AddToCart(product)">Add to Cart</button>
+                                                <button class="btn btn-primary" @onclick="() => AddToCart(product)"> + </button>
                                             </td>
                                         </tr>
                                     }
@@ -131,32 +181,33 @@ else
                     </div>
 
 
-                    <label for="customerSelect">Select customer:</label>
+           @*         <label for="customerSelect">Select customer:</label>
                     <select id="customerSelect" @bind="selectedCustomer">
                         <option value="">-- Select --</option>
                         @foreach (var customer in customers)
                         {
                             <option value="@customer">@customer.Name</option>
                         }
-                    </select>
+                    </select>*@
                     <CustomerSelector Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <!-- Summary and other information here -->
-                    <OrderReceipt order="CurrentOrder" onClose="@(() => ShowReceipt = false)" />
                 </div>
             </div>
         </div>
     </div>
 }
 
-@if (CurrentOrder!=null)
+@*@if (CurrentOrder!=null)
 {
     <OrderPage orderIdx='@CurrentOrder.Id.ToString()' @ref="orderPage1"></OrderPage>
-}
+}*@
 
-            @code{}
+
+@code{
+
+    string selectedTagFilter = "";
+    private void OnChange_selectedTagFilter(string selected)
+    {
+        selectedTagFilter = selected;
+        Search();
+    }
+            }

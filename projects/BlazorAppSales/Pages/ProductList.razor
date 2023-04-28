@@ -1,0 +1,108 @@
+﻿@page "/products"
+@using BlazorAppSales.Data;
+@using MyApp.Services
+
+<h1>Products</h1>
+<datalist id="texts">
+ 
+    @foreach (var item in productTags)
+    {
+        <option value="@item" />
+    }
+</datalist>
+@if (products == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product Name</th>
+                <th>Price</th>
+                <th>Tags</th>
+                <th>Edit</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>
+                        <input class="form-control" @bind-value="@product.Name"   />
+                    </td>
+                    <td>
+                        <input class="form-control" type="number" @bind-value="@product.Price"   />
+                    </td>
+                    <td>
+                        @*<input class="form-control" value="@product.Tags" @onchange="() => UpdateProductTags(product)" />*@
+                        @if (product.ProductTags == null) { product.ProductTags = new List<ProductTag>(); }
+                        <input list="texts" multiple type="email" value="@string.Join(", ", product.ProductTags)" @onchange="@(e => UpdateProductTags(product, e.Value.ToString()))" />
+                    </td>
+                    <td>
+                        <button class="btn btn-primary" @onclick="() => EditProduct(product)">Save</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+
+@code {
+    private List<Product> products;
+    private ProductService productService;
+    List<string> productTags = new List<string>();
+    protected override async Task OnInitializedAsync()
+    {
+        productService = new ProductService();
+        products = await productService.GetProductsAsync();
+        productTags = await productService.GetProductsTagsAsync();
+    }
+
+
+
+
+
+    private async void UpdateProductTags(Product product, string newTags)
+    {
+        var tags = newTags.Split(",").Select(x => x.Trim()).ToList();
+        List<ProductTag> tags_objects = tags.Select(tag => new ProductTag { Name = tag }).ToList();
+        product.ProductTags = tags_objects;
+        await productService.UpdateProduct(product);
+    }
+    private async void DeleteProduct(int productId)
+    {
+        await productService.DeleteProductAsync(productId);
+        products = await productService.GetProductsAsync();
+    }
+    private async void CreateProduct()
+    {
+        var newProduct = new Product() { Name = "New Product", Price = 0 };
+        await productService.CreateProductAsync(newProduct);
+        products = await productService.GetProductsAsync();
+    }
+
+
+    private void UpdateProductName(Product product)
+    {
+       // product.Name = eventArgs.Value.ToString();
+    }
+
+    private void UpdateProductPrice(Product product)
+    {
+      //  product.Price = Convert.ToDecimal(eventArgs.Value);
+    }
+
+    private void UpdateProductTags(Product product)
+    {
+       // product.Tags = eventArgs.Value.ToString();
+    }
+
+    private async Task EditProduct(Product product)
+    {
+        await productService.UpdateProduct(product);
+    }
+}

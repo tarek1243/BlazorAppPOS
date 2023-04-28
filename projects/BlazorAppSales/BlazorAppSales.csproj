@@ -7,6 +7,10 @@
     <UserSecretsId>aspnet-BlazorAppSales-dcc3d1a6-3695-4785-aa95-3ddccb281387</UserSecretsId>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Content Remove="Pages\General\OrderReceipt.razor" />
+  </ItemGroup>
+
  
 
   <ItemGroup>

@@ -4,7 +4,10 @@
 
 <label for="searchh">Customer</label>
 <div class="input-group">
-    <input id="searchh" type="text" class="form-control" @bind-value="@searchText"  placeholder="SearchForCustomer"/>
+    <input id="searchh" type="text" class="form-control" 
+    @bind-value="@searchText"  placeholder="SearchForCustomer"
+           @oninput="(e)=> searchText = e.Value.ToString()"
+           @onkeydown="Search" />
     <button class="btn btn-outline-secondary" @onclick="Search"><i class="fa fa-search"></i></button>
 </div>
 
@@ -118,6 +121,10 @@
         else
         {
             Customers_filtered = Customers_full.Where(c => c.Name.Contains(searchText)).ToList();// await CustomerService.SearchCustomersAsync(SearchText);
+
+            if (Customers_filtered.Count > 0)
+                SelectedCustomer = Customers_filtered[0];
+
         }
     }
 

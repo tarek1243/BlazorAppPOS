@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
+using Humanizer;
 
 namespace BlazorAppSales.Data
 {
@@ -37,12 +38,12 @@ namespace BlazorAppSales.Data
 
         public virtual DbSet<Company> Companies { get; set; }
         public virtual DbSet<Product> Products { get; set; }
+        public DbSet<ProductTag> ProductTags { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
         public virtual DbSet<Customer> Customers { get; set; }
         public virtual DbSet<Shift>  Shifts { get; set; }
         // Add a new table for storing the last invoice number used for each company
         public DbSet<CompanyInvoiceNumber> CompanyInvoiceNumbers { get; set; }
-
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and constraints
@@ -54,6 +55,17 @@ namespace BlazorAppSales.Data
                     new CompanyInvoiceNumber { Id = 1, CompanyId = 1, LastInvoiceNumber = 0 },
                     new CompanyInvoiceNumber { Id = 2, CompanyId = 2, LastInvoiceNumber = 0 }
                 );
+
+
+
+            // This allows for a many-to - many relationship between Product and ProductTag
+            modelBuilder.Entity<ProductTag>()
+    .HasKey(pt => pt.Id);
+
+            modelBuilder.Entity<ProductTag>()
+                .HasMany(pt => pt.Products)
+                .WithMany(p => p.ProductTags)
+                .UsingEntity(j => j.ToTable("ProductProductTag"));
         }
 
         /* 
@@ -70,6 +82,7 @@ namespace BlazorAppSales.Data
         public string Name { get; set; }
         public List<Product> Products { get; set; }
         public List<Order> Orders { get; set; }
+        //public List<string> Tags { get; set; } = new List<string>();
     }
 
 
@@ -95,12 +108,23 @@ namespace BlazorAppSales.Data
         public Company Company { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
-    }
+        //public List<string> Tags { get; set; } = new List<string>();
+        public List<ProductTag>? ProductTags { get; set; }
 
+    }
+    public class ProductTag
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<Product> Products { get; set; }
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
 
     public class Order
     {
-
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
@@ -116,13 +140,10 @@ namespace BlazorAppSales.Data
         [ForeignKey("shift")]
         public int shift_Id { get; set; }
         public int InvoiceNumber { get; set; }
-
         public Company  company { get; set; }
         [ForeignKey("company")]
         public int CompanyId { get; set; }
         public string company_name { get; set; } = "";
-
-
     }
 
 
@@ -200,6 +221,7 @@ namespace BlazorAppSales.Data
         public string? Email { get; set; }
         public string? Phone { get; set; }
         public List<Order> Orders { get; set; }
+        //public List<string> Tags { get; set; } = new List<string>();
 
         public override string ToString()
         {

@@ -14,6 +14,8 @@ dotnet ef database update --context DbContextMainData
 dotnet ef migrations remove --context DbContextMainData
 
 */
+
+
 /*
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser, ApplicationRole, string, IdentityUserClaim<string>, ApplicationUserRole, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>*/
    
@@ -37,13 +39,7 @@ dotnet ef migrations remove --context DbContextMainData
         }
     }
 
-
 /* 
-    public class ApplicationUser : IdentityUser
-    {
-        public string NewField { get; set; } = "";
-    }
-
    public class ApplicationUserRole : IdentityUserRole<string>
     {
         public virtual ApplicationUser User { get; set; }

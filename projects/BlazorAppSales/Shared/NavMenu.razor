@@ -16,22 +16,16 @@
                 <span class="oi oi-home" aria-hidden="true"></span> POS
             </NavLink>
         </div>
-        <div class="nav-item px-3">
+ @*       <div class="nav-item px-3">
             <NavLink class="nav-link" href="counter">
                 <span class="oi oi-plus" aria-hidden="true"></span> print test
             </NavLink>
-        </div>
+        </div>*@
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="customers">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Customers
             </NavLink>
         </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="products">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> Products
-            </NavLink>
-        </div>
-
 
         <div class="nav-item px-3">
             <NavLink class="nav-link" href="Ecommerce">
@@ -39,21 +33,17 @@
             </NavLink>
         </div>
 
-
-
-
-
+        <li class="nav-item px-3">
+            <NavLink class="nav-link" href="/products">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Products
+            </NavLink>
+        </li>
     </nav>
 </div>
 
-
-
-
 @code {
     private bool collapseNavMenu = true;
-
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
-
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;

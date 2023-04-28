@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ClassLibraryModels", "proje
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GeneralUtil", "projects\GeneralUtil\GeneralUtil.csproj", "{165830FC-850A-474D-B494-2EBE48DAAFBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlazorAppTest", "BlazorAppTest\BlazorAppTest.csproj", "{AA8CF72A-7C73-4330-8A40-5711E37E1C9F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlazorAppTest", "BlazorAppTest\BlazorAppTest.csproj", "{AA8CF72A-7C73-4330-8A40-5711E37E1C9F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

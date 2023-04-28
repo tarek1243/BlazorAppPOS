@@ -73,7 +73,7 @@ namespace Util
 
 
 
-/*        public static async Task<string> GetUserMobile(AuthenticationStateProvider authenticationStateProvider
+        public static async Task<string> GetUserMobile(AuthenticationStateProvider authenticationStateProvider
           , ApplicationDbContext dbContext
            )
         {
@@ -88,7 +88,7 @@ namespace Util
                     mobile = user.Mobile;
             }
             return mobile;
-        }*/
+        }
 
 
 
@@ -96,7 +96,7 @@ namespace Util
 
 
 
-/*        public static async Task<bool> GetUserIsActive(AuthenticationStateProvider authenticationStateProvider
+        public static async Task<bool> GetUserIsActive(AuthenticationStateProvider authenticationStateProvider
         , ApplicationDbContext dbContext
          )
         {
@@ -112,7 +112,7 @@ namespace Util
             }
             return result;
         }
-*/
+
 
 
         public static async Task<WebApp1User> GetUser(AuthenticationStateProvider authenticationStateProvider
@@ -128,7 +128,7 @@ namespace Util
                // email = (new System.Collections.Generic.List<System.Security.Claims.ClaimsIdentity>(authState.User.Identities)[0]).Name;
                 var user = dbContext.Users.Where(u => u.Email == email).FirstOrDefault();
                 if (user != null)
-                    result = (WebApp1User)user;
+                    result = user;
             }
             return result;
         }
@@ -200,7 +200,7 @@ namespace Util
 
 
 
-/*        public static async Task<string> GetUserCompanyName(AuthenticationStateProvider authenticationStateProvider
+        public static async Task<string> GetUserCompanyName(AuthenticationStateProvider authenticationStateProvider
          , ApplicationDbContext dbContext
           )
         {
@@ -216,7 +216,7 @@ namespace Util
                 //db.Partners.Where(p => p.email == email).FirstOrDefault().accountNumber;
             }
             return CompanyName;
-        }*/
+        }
 
 
   /*      public static async Task<string> GetUserIBAN(AuthenticationStateProvider authenticationStateProvider
