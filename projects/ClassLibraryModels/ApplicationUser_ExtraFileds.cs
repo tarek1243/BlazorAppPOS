@@ -19,8 +19,8 @@ namespace ClassLibraryModels
         public bool isActive { get; set; } = true;
         public string branch { get; set; } = "";
         public byte[]? logo { get; set; }
-
-
+        public string EmployeeName { get; set; } = "";
+        public string EmployeeNumber { get; set; } = "";
     }
 
     // /// <summary>

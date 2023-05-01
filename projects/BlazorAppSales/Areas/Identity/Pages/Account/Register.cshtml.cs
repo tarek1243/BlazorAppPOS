@@ -102,6 +102,8 @@ namespace BlazorAppSales.Areas.Identity.Pages.Account
             public string Mobile { get; set; }
             public string VAT_number { get; set; }
             public string branch { get; set; } = "";
+            public string EmployeeNumber { get; set; } = "";
+            public string EmployeeName { get; set; } = "";
 
         }
 
@@ -126,6 +128,8 @@ namespace BlazorAppSales.Areas.Identity.Pages.Account
                 user.Mobile = Input.Mobile;
                 user.VAT_number = Input.VAT_number;
                 user.branch = Input.branch;
+                user.EmployeeNumber = Input.EmployeeNumber;
+                user.EmployeeName = Input.EmployeeNumber;
 
                 await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.Email, CancellationToken.None);

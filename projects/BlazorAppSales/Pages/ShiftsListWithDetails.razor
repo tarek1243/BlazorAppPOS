@@ -1,0 +1,49 @@
+﻿@page "/shiftsDetails"
+@using BlazorAppSales.Data;
+@inject ShiftService ShiftService
+
+<h1>Shifts List</h1>
+
+@if (shifts != null)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Shift Id</th>
+                <th>Employee Number</th>
+                <th>Branch</th>
+                <th>Company</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Order Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var shift in shifts)
+            {
+                <tr>
+                    <td><a href="@($"/shifts/{shift.Id}")">@shift.Id</a></td>
+                    <td>@shift.EmployeeNumber</td>
+                    <td>@shift.Branch</td>
+                    <td>@shift.CompanyName</td>
+                    <td>@shift.OpenedAt</td>
+                    <td>@shift.ClosedAt</td>
+                    <td>@shift.Orders.Count()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private List<Shift> shifts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        shifts = await ShiftService.GetShiftsWithOrdersSummary();
+    }
+}

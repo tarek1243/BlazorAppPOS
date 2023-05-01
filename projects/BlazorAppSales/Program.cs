@@ -19,7 +19,7 @@ namespace BlazorAppSales
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-            builder.Services.AddDbContext<ClassLibraryModels.ApplicationDbContext>(options =>
+            builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -35,7 +35,7 @@ namespace BlazorAppSales
                 options.Password.RequireNonAlphanumeric = false;
             }
 
-            ).AddEntityFrameworkStores<ClassLibraryModels.ApplicationDbContext>();
+            ).AddEntityFrameworkStores<ApplicationDbContext>();
             //builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<ApplicationUser>>();
 
 
@@ -45,7 +45,7 @@ namespace BlazorAppSales
 
 
 
-  
+
 
 
             builder.Services.AddRazorPages();
@@ -54,6 +54,7 @@ namespace BlazorAppSales
             /* builder.Services.AddSingleton<WeatherForecastService>();*/
 
            builder.Services.AddTransient<OrderService>();
+            builder.Services.AddTransient<ShiftService>();
 
 
             //.AddEntityFrameworkStores<ApplicationDbContext>()

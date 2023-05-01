@@ -1,3 +1,49 @@
+
+.fancy-div {
+    height: 50vh; /* Sets height to half of the viewport height */
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    padding: 20px;
+    overflow-y: scroll; /* Makes the div scrollable vertically */
+}
+
+/* Optional styles for a fancy look */
+
+h1 {
+    font-size: 24px;
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+    color: #333;
+}
+
+p {
+    font-size: 16px;
+    line-height: 1.5;
+    color: #666;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 .print-button {
     background-color: #4CAF50; /* Green */
     border: none;

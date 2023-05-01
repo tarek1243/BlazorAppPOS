@@ -16,14 +16,15 @@ namespace BlazorAppSales.Data
     {
         private readonly DbContextMainData _dbContext=new DbContextMainData();
 
-/*        public OrderService(DbContextMainData dbContext)
-        {
-            _dbContext = dbContext;
-        }*/
+        /*        public OrderService(DbContextMainData dbContext)
+                {
+                    _dbContext = dbContext;
+                }*/
 
+  
         public async Task<Order> GetOrderById(int orderId)
         {
-            return await _dbContext.Orders
+            return await _dbContext.Pos_Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Product)
@@ -32,7 +33,7 @@ namespace BlazorAppSales.Data
 
         public async Task<IEnumerable<Order>> GetOrdersByCustomerId(int customerId)
         {
-            return await _dbContext.Orders
+            return await _dbContext.Pos_Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Product)
@@ -42,7 +43,7 @@ namespace BlazorAppSales.Data
 
         public async Task<IEnumerable<Order>> GetAllOrders()
         {
-            return await _dbContext.Orders
+            return await _dbContext.Pos_Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Items)
                     .ThenInclude(oi => oi.Product)
@@ -51,7 +52,7 @@ namespace BlazorAppSales.Data
 
         public async Task<Order> PlaceOrderx(Order order)
         {
-            _dbContext.Orders.Add(order);
+            _dbContext.Pos_Orders.Add(order);
             await _dbContext.SaveChangesAsync();
             return order;
         }
@@ -60,7 +61,7 @@ namespace BlazorAppSales.Data
         {
             // Get the company for the customer
            // var customer = await _dbContext.Customers.FindAsync(order.CustomerId);
-            var company = await _dbContext.Companies.FindAsync(order.CompanyId);
+            var company = await _dbContext.Pos_Companies.FindAsync(order.CompanyId);
 
             // Get the last invoice number used for the company and increment it
             var companyInvoiceNumber = await _dbContext.CompanyInvoiceNumbers

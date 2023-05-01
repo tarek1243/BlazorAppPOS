@@ -1,0 +1,68 @@
+﻿@page "/ordersDetails"
+
+@using BlazorAppSales.Data;
+
+
+
+<div class="fancy-div">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Id</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Orders != null)
+                @foreach (var order in Orders)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.customer_name</td>
+                        <td>@order.OrderDate.ToString("g")</td>
+                        <td>@order.Total.ToString("C")</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => ViewOrder(order)">View</button>
+                        </td>
+                    </tr>
+                }
+        </tbody>
+    </table>
+</div>
+@if (SelectedOrder != null)
+{
+    <div class="fancy-div">
+        <div class="card">
+            <div class="card-header">
+                <h3>Order Details</h3>
+            </div>
+            <div class="card-body ">
+                <OrderSummary order="@SelectedOrder" />
+            </div>
+        </div>
+    </div>
+}
+@code {
+    
+    private Order SelectedOrder;
+
+    //[Parameter]
+    //public List<Order> Orders { get; set; }
+
+    IEnumerable<Order> Orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        OrderService os = new OrderService();
+
+        Orders = await os.GetAllOrders();
+    }
+
+    private void ViewOrder(Order order)
+    {
+        SelectedOrder = order;
+    }
+}

@@ -27,10 +27,50 @@
                 <label asp-for="Input.ConfirmPassword">Confirm Password</label>
                 <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
             </div>
+
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.CompanyName" class="form-control" autocomplete="CompanyName" aria-required="true" placeholder="Company Name" />
+                <label asp-for="Input.CompanyName">Company Name</label>
+                <span asp-validation-for="Input.CompanyName" class="text-danger"></span>
+            </div>
+
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.Mobile" class="form-control" autocomplete="Mobile" aria-required="true" placeholder="Mobile" />
+                <label asp-for="Input.Mobile">Mobile</label>
+                <span asp-validation-for="Input.Mobile" class="text-danger"></span>
+            </div>
+
+
+
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.branch" class="form-control" autocomplete="Branch" aria-required="true" placeholder="Branch" />
+                <label asp-for="Input.branch">Branch</label>
+                <span asp-validation-for="Input.branch" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.EmployeeNumber" class="form-control" autocomplete="EmployeeNumber" aria-required="true" placeholder="Employee Number" />
+                <label asp-for="Input.EmployeeNumber">Employee Number</label>
+                <span asp-validation-for="Input.EmployeeNumber" class="text-danger"></span>
+            </div>
+
+            <div class="form-floating mb-3">
+                <input asp-for="Input.EmployeeName" class="form-control" autocomplete="EmployeeName" aria-required="true" placeholder="Employee Name" />
+                <label asp-for="Input.EmployeeName">Employee Name</label>
+                <span asp-validation-for="Input.EmployeeName" class="text-danger"></span>
+            </div>
+  
+
+            
+            EmployeeNumber
+            
             <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
         </form>
     </div>
-    <div class="col-md-6 col-md-offset-2">
+@*    <div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to register.</h3>
             <hr />
@@ -59,7 +99,7 @@
                 }
             }
         </section>
-    </div>
+    </div>*@
 </div>
 
 @section Scripts {

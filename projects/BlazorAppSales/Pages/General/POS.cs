@@ -17,11 +17,11 @@ namespace BlazorAppSales.Pages.General
         private string searchQuery_item = string.Empty;
         Order CurrentOrder = new Order();
         bool ShowReceipt = true;
-        private List<Product> ProductsAll { get; set; }
-        private List<Product> Products { get; set; }
-        private List<Order> Orders { get; set; }
-        private List<CartItem> Cart { get; set; }
-        private List<Customer> customers { get; set; } = new List<Customer>();
+        private List<Product>? ProductsAll { get; set; }
+        private List<Product>? Products { get; set; }
+        private List<Order>? Orders { get; set; }
+        private List<CartItem>? Cart { get; set; }
+        private List<Customer>? customers { get; set; } = new List<Customer>();
 
         List<string> productTags = new List<string>();
 
@@ -39,7 +39,7 @@ namespace BlazorAppSales.Pages.General
   /*      private Customer newCustomer { get; set; } = new Customer();*/
         private async Task CreateCustomer(Customer customer)
         {
-            customers = DbContext.Customers.ToList();
+            customers = DbContext.Pos_Customers.ToList();
             selectedCustomer = customer;
         }
 
@@ -71,10 +71,10 @@ namespace BlazorAppSales.Pages.General
 
         protected override async Task OnInitializedAsync()
         {
-            ProductsAll = DbContext.Products.ToList();
-            Products = DbContext.Products.Include(p=>p.ProductTags).ToList();
-            Orders = DbContext.Orders.ToList();
-            customers = DbContext.Customers.ToList();
+            ProductsAll = DbContext.Pos_Products.ToList();
+            Products = DbContext.Pos_Products.Include(p=>p.ProductTags).ToList();
+            Orders = DbContext.Pos_Orders.ToList();
+            customers = DbContext.Pos_Customers.ToList();
             Cart = new List<CartItem>();
 
 
@@ -123,7 +123,7 @@ namespace BlazorAppSales.Pages.General
         private async Task OpenShift()
         {
             // Check if there is an open shift already
-            var openShift = await db.Shifts.FirstOrDefaultAsync(s => s.IsOpen);
+            var openShift = await db.Pos_Shifts.FirstOrDefaultAsync(s => s.IsOpen);
 
             if (openShift != null)
             {
@@ -147,7 +147,7 @@ namespace BlazorAppSales.Pages.General
                 };
 
                 // Add the new shift to the database and save the changes
-                await db.Shifts.AddAsync(newShift);
+                await db.Pos_Shifts.AddAsync(newShift);
                 await db.SaveChangesAsync();
 
                 ShiftIsOpen = true;
@@ -156,7 +156,7 @@ namespace BlazorAppSales.Pages.General
         public async Task CloseShift()
         {
             // Get the current shift from the database
-            var shift = await db.Shifts
+            var shift = await db.Pos_Shifts
                  .Include(s => s.Orders)
                 .FirstOrDefaultAsync(s => s.IsOpen);
 
@@ -175,7 +175,7 @@ namespace BlazorAppSales.Pages.General
             shift.IsOpen = false;
 
             // Add the ShiftSummary to the database
-            db.Shifts.Attach(shift);
+            db.Pos_Shifts.Attach(shift);
 
             // Save changes to the database
             await db.SaveChangesAsync();
@@ -206,10 +206,10 @@ namespace BlazorAppSales.Pages.General
 
 
             //var company = await DbContext.Companies.FindAsync(currentCompanyId);
-            var company = await DbContext.Companies.Where(c => c.Name == currentCompanyName)
+            var company = await DbContext.Pos_Companies.Where(c => c.Name == currentCompanyName)
                 .FirstOrDefaultAsync();
             if(company==null )
-                company = await DbContext.Companies.FindAsync(defaultCompanyId);
+                company = await DbContext.Pos_Companies.FindAsync(defaultCompanyId);
 
             // Get the last invoice number used for the company and increment it
             var companyInvoiceNumber = await DbContext.CompanyInvoiceNumbers
@@ -234,11 +234,11 @@ namespace BlazorAppSales.Pages.General
 
             order.Total = order.Items.Sum(o => (o.Quantity * o.Product.Price));
 
-            Shift currentShift = await DbContext.Shifts.FirstOrDefaultAsync(s => s.IsOpen);
+            Shift currentShift = await DbContext.Pos_Shifts.FirstOrDefaultAsync(s => s.IsOpen);
             order.shift_Id = currentShift.Id;
             order.shift = currentShift;
 
-            DbContext.Orders.Add(order);
+            DbContext.Pos_Orders.Add(order);
             //AddOrderToShift(order);
             await DbContext.SaveChangesAsync();
             Orders.Add(order);
@@ -268,7 +268,7 @@ namespace BlazorAppSales.Pages.General
         public async Task AddOrderToShift(Order order)
         {
             // Get the current open shift from the database
-            var shift = await db.Shifts
+            var shift = await db.Pos_Shifts
                  .Include(s => s.Orders)
                 .FirstOrDefaultAsync(s => s.IsOpen);
 
@@ -276,7 +276,7 @@ namespace BlazorAppSales.Pages.General
             {
                 // No open shift found, so create a new one
                 shift = new Shift { IsOpen = true, OpenedAt = DateTime.UtcNow };
-                db.Shifts.Add(shift);
+                db.Pos_Shifts.Add(shift);
             }
 
             // Link the order to the shift

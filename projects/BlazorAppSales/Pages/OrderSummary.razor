@@ -1,0 +1,77 @@
+﻿@page "/order-summary/{id}"
+@using BlazorAppSales.Data;
+
+
+@if (order != null)
+{
+   @*#if used row to keep it in one line*@
+    <div class="row noBackground"> 
+        <div class="  col-md-4">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <th>Order ID:</th>
+                        <td>@order.Id</td>
+                    </tr>
+                    <tr>
+                        <th>Date:</th>
+                        <td>@order.OrderDate.ToShortDateString()</td>
+                    </tr>
+                    <tr>
+                        <th>Customer:</th>
+                        <td>@order.Customer.Name</td>
+                    </tr>
+                    <tr>
+                        <th>Employee:</th>
+                        @*<td>@order.Employee.Name</td>*@
+                    </tr>
+                    <tr>
+                        <th>Payment Method:</th>
+                        @*<td>@order.PaymentMethod</td>*@
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="  col-md-8">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Quantity</th>
+                        <th>Price</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var line in order.Items)
+                    {
+                        <tr>
+                            <td>@line.Product.Name</td>
+                            <td>@line.Quantity</td>
+                            <td>@line.Price.ToString("C")</td>
+                            <td>@(line.Quantity * line.Price).ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+    [Parameter]
+    public Order order { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+       // OrderService os= new OrderService();
+      //  order = await os.GetOrderById(Id);
+    }
+}

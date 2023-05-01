@@ -148,7 +148,7 @@
     private void save()
     {
         DbContextMainData DbContextMainData = new DbContextMainData();
-        DbContextMainData.Customers.Attach(newCustomer);
+        DbContextMainData.Pos_Customers.Attach(newCustomer);
         DbContextMainData.SaveChanges();
         endCreateNewCustomer();
         OnNewCustomerCreated.InvokeAsync(newCustomer);

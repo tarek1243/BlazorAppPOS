@@ -36,12 +36,12 @@ namespace BlazorAppSales.Data
         }
 
 
-        public virtual DbSet<Company> Companies { get; set; }
-        public virtual DbSet<Product> Products { get; set; }
-        public DbSet<ProductTag> ProductTags { get; set; }
-        public virtual DbSet<Order> Orders { get; set; }
-        public virtual DbSet<Customer> Customers { get; set; }
-        public virtual DbSet<Shift>  Shifts { get; set; }
+        public virtual DbSet<Company> Pos_Companies { get; set; }
+        public virtual DbSet<Product> Pos_Products { get; set; }
+        public DbSet<ProductTag> Pos_ProductTags { get; set; }
+        public virtual DbSet<Order> Pos_Orders { get; set; }
+        public virtual DbSet<Customer> Pos_Customers { get; set; }
+        public virtual DbSet<Shift> Pos_Shifts { get; set; }
         // Add a new table for storing the last invoice number used for each company
         public DbSet<CompanyInvoiceNumber> CompanyInvoiceNumbers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -102,6 +102,7 @@ namespace BlazorAppSales.Data
         public int Id { get; set; }
         public string Number { get; set; }
         public string Name { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         public int Stock { get; set; }
         public int CompanyId { get; set; }
@@ -129,8 +130,11 @@ namespace BlazorAppSales.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public DateTime OrderDate { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Total { get; set; } = 0;
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Total_With_VAT { get; set; } = 0;
+        [Column(TypeName = "decimal(18,2)")]
         public decimal VAT_Amount { get; set; } = 0;
         public List<CartItem> Items { get; set; }
         public int CustomerId { get; set; }
@@ -153,8 +157,21 @@ namespace BlazorAppSales.Data
         public int Id { get; set; }
         public int OrderId { get; set; }
         public int ProductId { get; set; }
-        public int Quantity { get; set; }
+        public string ProductName { get; set; } = "";
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Quantity { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal UnitPrice { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal LineAmount { get; set; }
+        
+
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Total { get; set; }
     }
 
@@ -166,10 +183,13 @@ namespace BlazorAppSales.Data
         public int Id { get; set; }
         public DateTime OpenedAt { get; set; }
         public DateTime? ClosedAt { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalSales { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal TotalPayments { get; set; }
         public bool IsOpen { get; set; }
-        public string EmployeeNumber { get; set; }
+        public string EmployeeNumber { get; set; } = "";
+
         public string Branch { get; set; }
         public string CompanyName { get; set; }
         public List<Order> Orders { get; set; }
@@ -203,7 +223,7 @@ namespace BlazorAppSales.Data
 
             DbContextMainData db = new DbContextMainData();
             Customer customer = null;
-            customer = db.Customers.Where(c => c.Id == int.Parse(value.ToString())).FirstOrDefault();
+            customer = db.Pos_Customers.Where(c => c.Id == int.Parse(value.ToString())).FirstOrDefault();
 
             return customer; //  return (Customer)value; ///base.ConvertFrom(context, culture, value);
         }
@@ -233,8 +253,11 @@ namespace BlazorAppSales.Data
     {
         public int Id { get; set; }
         public Product Product { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Quantity { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Total { get; set; }
     }
 

@@ -24,7 +24,7 @@ namespace MyApp.Services
         {
             // Your code to retrieve products from the database goes here
             // For example:
-            products = await dbContext.Products.Include(p => p.ProductTags).ToListAsync();
+            products = await dbContext.Pos_Products.Include(p => p.ProductTags).ToListAsync();
             return products;
         }
 
@@ -32,7 +32,7 @@ namespace MyApp.Services
         {
             // Your code to retrieve products from the database goes here
             // For example:
-            var productTags = await dbContext.ProductTags
+            var productTags = await dbContext.Pos_ProductTags
 
                 .Select(m => m.Name).Distinct().ToListAsync();
             return productTags;
@@ -40,7 +40,7 @@ namespace MyApp.Services
    
         public async Task<List<ProductTag>> GetProductTagsWithProducts()
         {
-            var tags = await dbContext.ProductTags
+            var tags = await dbContext.Pos_ProductTags
                 .Include(tag => tag.Products)
                 .ToListAsync();
 
@@ -57,21 +57,21 @@ namespace MyApp.Services
         {
             // Your code to update the product in the database goes here
             // For example:
-             dbContext.Products.Attach (product);
+             dbContext.Pos_Products.Attach (product);
              await dbContext.SaveChangesAsync();
         }
 
         public async Task<Product> CreateProductAsync(Product product)
         {
-            dbContext.Products.Add(product);
+            dbContext.Pos_Products.Add(product);
             await dbContext.SaveChangesAsync();
             return product;
         }
 
         public async Task DeleteProductAsync(int id)
         {
-            var product = await dbContext.Products.FindAsync(id);
-            dbContext.Products.Remove(product);
+            var product = await dbContext.Pos_Products.FindAsync(id);
+            dbContext.Pos_Products.Remove(product);
             await dbContext.SaveChangesAsync();
         }
     }

@@ -1,0 +1,56 @@
+﻿@page "/shifts/{id:int}"
+@using BlazorAppSales.Data;
+@inject ShiftService ShiftService
+
+<h1>Shift Details</h1>
+
+@if (shift != null)
+{
+    <h2>Shift Id: @shift.Id</h2>
+    <h3>Employee Number: @shift.EmployeeNumber</h3>
+    <h3>Branch: @shift.Branch</h3>
+    <h3>Company: @shift.CompanyName</h3>
+    <h3>Start Time: @shift.OpenedAt</h3>
+    <h3>End Time: @shift.ClosedAt</h3>
+    <h3>Order Count: @shift.Orders.Count()</h3>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Id</th>
+                <th>Customer Name</th>
+                <th>Total Amount</th>
+                <th>Order Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in shift.Orders)
+            {
+                <tr>
+                    <td><a href="@($"/orders/{order.Id}")">@order.Id</a></td>
+                    <td>@order.customer_name</td>
+                    <td>@order.Total</td>
+                    <td>@order.OrderDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    [Parameter]
+    public int Id { get; set; }
+
+    private Shift shift;
+   // private List<Order> orders;
+
+    protected override async Task OnInitializedAsync()
+    {
+        shift = await ShiftService.GetShiftAsync(Id);
+        //orders = await ShiftService.GetOrdersForShiftAsync(Id);
+    }
+}
