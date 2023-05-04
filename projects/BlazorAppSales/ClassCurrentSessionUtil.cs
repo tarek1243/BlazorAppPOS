@@ -1,5 +1,7 @@
 ﻿using ClassLibraryModels;
+using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +41,8 @@ namespace Util
                 }
 
 
-                public static async Task<List<ApplicationUserRole>> getUserRolesAsync(
+              
+  public static async Task<List<ApplicationUserRole>> getUserRolesAsync(
                  AuthenticationStateProvider authenticationStateProvider
               , ApplicationDbContext dbContext )
                 {
@@ -54,9 +57,8 @@ namespace Util
                     }
                     else return null ; // new  List<ApplicationRole>();
                 }
+
         */
-
-
 
 
         public static async Task<string> GetUserEmail(            AuthenticationStateProvider authenticationStateProvider          )

@@ -3,30 +3,23 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using Humanizer;
 
 namespace BlazorAppSales.Data
 {
     /*
-       
     dotnet ef migrations add modDb120 --context    DbContextMainData
     dotnet ef database update --context DbContextMainData
     dotnet ef migrations remove --context DbContextMainData
-
     */
+
     public class DbContextMainData : DbContext
     {
         public DbContextMainData()
         {
         }
-        /// <summary>
-        ///        
-        /// </summary>
-        /// <param name="options"></param>
         public DbContextMainData(DbContextOptions<DbContextMainData> options)
     : base(options)
         { }
-
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
@@ -34,7 +27,6 @@ namespace BlazorAppSales.Data
                 optionsBuilder.UseSqlServer("Data Source=DESKTOP-H7EA1N4;Initial Catalog=blazorPos;Integrated Security=True;TrustServerCertificate=True");
             }
         }
-
 
         public virtual DbSet<Company> Pos_Companies { get; set; }
         public virtual DbSet<Product> Pos_Products { get; set; }
@@ -56,8 +48,6 @@ namespace BlazorAppSales.Data
                     new CompanyInvoiceNumber { Id = 2, CompanyId = 2, LastInvoiceNumber = 0 }
                 );
 
-
-
             // This allows for a many-to - many relationship between Product and ProductTag
             modelBuilder.Entity<ProductTag>()
     .HasKey(pt => pt.Id);
@@ -66,6 +56,14 @@ namespace BlazorAppSales.Data
                 .HasMany(pt => pt.Products)
                 .WithMany(p => p.ProductTags)
                 .UsingEntity(j => j.ToTable("ProductProductTag"));
+
+
+
+
+            /*            modelBuilder.Entity<Product>()
+                        .HasMany(e => e.RelatedProducts)
+                        .WithOne(e => e.ParentProduct)
+                        .OnDelete(DeleteBehavior.SetNull);*/
         }
 
         /* 
@@ -73,7 +71,6 @@ namespace BlazorAppSales.Data
   dotnet ef database update --context DbContextMainData
          */
     }
-
 
     // Company model
     public class Company
@@ -85,8 +82,6 @@ namespace BlazorAppSales.Data
         //public List<string> Tags { get; set; } = new List<string>();
     }
 
-
-
     public class CompanyInvoiceNumber
     {
         public int Id { get; set; }
@@ -94,35 +89,6 @@ namespace BlazorAppSales.Data
         public int LastInvoiceNumber { get; set; }
     }
 
-
-
-    // Product model
-    public class Product
-    {
-        public int Id { get; set; }
-        public string Number { get; set; }
-        public string Name { get; set; }
-        [Column(TypeName = "decimal(18,2)")]
-        public decimal Price { get; set; }
-        public int Stock { get; set; }
-        public int CompanyId { get; set; }
-        public Company Company { get; set; }
-        public string Description { get; set; }
-        public string ImageUrl { get; set; }
-        //public List<string> Tags { get; set; } = new List<string>();
-        public List<ProductTag>? ProductTags { get; set; }
-
-    }
-    public class ProductTag
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public List<Product> Products { get; set; }
-        public override string ToString()
-        {
-            return Name;
-        }
-    }
 
     public class Order
     {
@@ -148,10 +114,9 @@ namespace BlazorAppSales.Data
         [ForeignKey("company")]
         public int CompanyId { get; set; }
         public string company_name { get; set; } = "";
+        public bool ShowLines { get; set; } = false;
     }
 
-
-    // OrderItem model
     public class OrderItem
     {
         public int Id { get; set; }
@@ -162,19 +127,13 @@ namespace BlazorAppSales.Data
         public decimal Quantity { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
-
-
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal LineAmount { get; set; }
-        
-
-
         [Column(TypeName = "decimal(18,2)")]
         public decimal Total { get; set; }
     }
-
 
     public class Shift
     {
@@ -189,10 +148,10 @@ namespace BlazorAppSales.Data
         public decimal TotalPayments { get; set; }
         public bool IsOpen { get; set; }
         public string EmployeeNumber { get; set; } = "";
-
         public string Branch { get; set; }
         public string CompanyName { get; set; }
         public List<Order> Orders { get; set; }
+        public bool ShowLines { get; set; } = false;
     }
 
 
@@ -227,9 +186,6 @@ namespace BlazorAppSales.Data
 
             return customer; //  return (Customer)value; ///base.ConvertFrom(context, culture, value);
         }
-
-
-
     }
 
     // Customer model
@@ -237,9 +193,10 @@ namespace BlazorAppSales.Data
     public class Customer
     {
         public int Id { get; set; }
-        public string? Name { get; set; }
-        public string? Email { get; set; }
-        public string? Phone { get; set; }
+        public string? Name { get; set; } = "";
+        public string? Email { get; set; } = "";
+        public string? Phone { get; set; } = "";
+        public string? CustGroup { get; set; } = "";
         public List<Order> Orders { get; set; }
         //public List<string> Tags { get; set; } = new List<string>();
 

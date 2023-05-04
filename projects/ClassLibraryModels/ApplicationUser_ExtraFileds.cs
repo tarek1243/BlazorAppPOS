@@ -21,24 +21,26 @@ namespace ClassLibraryModels
         public byte[]? logo { get; set; }
         public string EmployeeName { get; set; } = "";
         public string EmployeeNumber { get; set; } = "";
+
+       // public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
     }
 
     // /// <summary>
     // /// /https://stackoverflow.com/questions/60254430/obtain-list-of-roles-in-ef-core-3-1
     // /// </summary>
-     
+
 
 
     //// [TypeConverter(typeof(MyTypeConverter_ApplicationRole))]
-    // public class ApplicationRole : IdentityRole
-    // {
-    //     // public ICollection<ApplicationUserRole> UserRoles { get; set; }
-    //     public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
-    //     public override string ToString()
-    //     {
-    //         return base.ToString();
-    //     }
-    // }
+    public class ApplicationRole : IdentityRole
+    {
+        // public ICollection<ApplicationUserRole> UserRoles { get; set; }
+        public virtual ICollection<ApplicationUserRole> UserRoles { get; set; }
+        public override string ToString()
+        {
+            return base.ToString();
+        }
+    }
 
     // public class MyTypeConverter_ApplicationRole : TypeConverter
     // {
@@ -62,16 +64,16 @@ namespace ClassLibraryModels
     //     }
     // }
 
-    // public class ApplicationUserRole : IdentityUserRole<string>
-    // {
-    //     public virtual ApplicationUser User { get; set; }
-    //     public virtual ApplicationRole Role { get; set; }
+    public class ApplicationUserRole : IdentityUserRole<string>
+    {
+        public virtual WebApp1User User { get; set; }
+        public virtual ApplicationRole Role { get; set; }
 
-    //     public override string ToString()
-    //     {
-    //         return Role.ToString();
-    //     }
-    // }
+        public override string ToString()
+        {
+            return Role.ToString();
+        }
+    }
 
 
 

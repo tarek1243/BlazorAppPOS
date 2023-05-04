@@ -1,3 +1,15 @@
+tr:focus-within {
+    box-shadow: 0 0 30px rgba(211, 1, 211, 0.3);
+}
+
+.centered {
+    vertical-align: middle;
+}
+
+
+
+
+
 
 .fancy-div {
     height: 50vh; /* Sets height to half of the viewport height */
@@ -22,17 +34,6 @@ p {
     line-height: 1.5;
     color: #666;
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 

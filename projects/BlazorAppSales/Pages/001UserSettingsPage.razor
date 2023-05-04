@@ -1,0 +1,186 @@
+﻿@page "/AccountSettings"
+@using Blazored.Toast.Services;
+@using ClassLibraryModels;
+@using Microsoft.AspNetCore.Identity;
+@using Microsoft.EntityFrameworkCore;
+@inject AuthenticationStateProvider authenticationStateProvider
+@inject IToastService toastService
+@inject NavigationManager uriHelper;
+
+<div>
+    @if (currentUser != null)
+{
+    <div class="text-center">
+        <h2> Account Settings</h2>
+    </div>
+
+    <form class="needs-validation" novalidate>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupPrepend">"Email"</span>
+                        <input type="text" disabled class="form-control" id="validationCustomUsername" placeholder="Email" @bind-value="@currentUser.Email" aria-describedby="inputGroupPrepend" required>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="col-md-4 mb-3">
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text" id="inputGroupPrepend">Company Name</span>
+                        <input type="text" class="form-control" id="validationCustomUsername" @bind-value="@currentUser.CompanyName">
+                    </div>
+                </div>
+            </div>
+
+                <div class="col-md-4 mb-3">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroupPrepend">VAT Number</span>
+                            <input type="text" class="form-control" id="validationCustomUsername" @bind-value="@currentUser.VAT_number">
+                        </div>
+                    </div>
+                </div>
+        </div>
+
+
+         
+        <br />
+        @if (@ImageDatax != null)
+        {
+            <br />
+            <div class="imageContainer">
+                Image :
+                <img class="img_hoverxxxx" src="@imgSrc_ImageData1" width="40%" height="40%" />
+            </div>
+            <br />
+            <br />
+            <br />
+        }
+
+      @* @if(imgSrc_ImageData1=="")*@
+        <div class="form-group">
+            <InputFile @ref="inputy" OnChange="UploadImage" class=" form-control form-control-file"></InputFile>
+        </div>
+        @* <button class="btn btn-primary" type="submit">Submit form</button>*@
+    </form>
+
+    <div class="d-flex justify-content-lg-center bd-highlight mb-3">
+        <button class="btn btn_1 glyphicon glyphicon-ok-circle w-25" @onclick="Save_changes">   Save   </button>
+    </div>
+}
+</div>
+
+@code {
+
+    private EditContext editContext_Account;
+    ApplicationDbContext db_identity = new ApplicationDbContext();
+    WebApp1User currentUser;
+
+    void Save_changes()
+    {
+        var countAll = db_identity.ChangeTracker.Entries<WebApp1User>().Count(e => e.State != EntityState.Unchanged);
+        db_identity.SaveChanges();
+        toastService.ShowSuccess("Saving SUCCESS :" + (countAll) );
+    }
+
+    public bool isAdmin { get; set; } = false;
+    List<ApplicationUserRole> roles;
+    ApplicationDbContext applicationDbContext = new ApplicationDbContext();
+
+    protected override async Task OnInitializedAsync()
+    {
+        readLookups();
+        if (currentUser != null)
+        {
+            //roles = await Util.ClassCurrentSessionUtil.getUserRolesAsync(authenticationStateProvider, applicationDbContext);
+            //isAdmin = roles.Where(r => r.Role.Name.Contains("Admin")).Count() > 0;
+
+            editContext_Account = new EditContext(currentUser);
+            imgSrc_ImageData1 = ClassLibraryUtil.ClassImageUtil.get_image_base64(currentUser.logo);
+            StateHasChanged();
+        }
+    }
+
+    private async Task readLookups()
+    {
+        string currentUserEmail = await GetUserEmail();
+        // List<Partner> partners = db.Partners.Where(t => t.email == currentUserEmail).ToList();
+
+        if (currentUserEmail == "")
+            uriHelper.NavigateTo(""//DynamicsBlazor1. ClassUtilAzure.url_base
+                );
+        //  uriHelper.NavigateTo("/");
+
+        currentUser = db_identity.Users.Where(u => u.Email == currentUserEmail).First();
+        //  db_idintity.Users.ToList()[0].
+
+        
+    }
+ 
+
+
+    private async Task<string> GetUserEmail()
+    {
+        // @inject AuthenticationStateProvider AuthenticationStateProvider
+        string email = "";
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            email = authState.User.Identity.Name;
+        }
+        return email;
+    }
+
+
+    private async Task<string> GetUserAccountNumber()
+    {
+        // @inject AuthenticationStateProvider AuthenticationStateProvider
+        string email = "";
+        string accountNumber = "";
+        var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+        if (authState.User.Identity.IsAuthenticated)
+        {
+            email = authState.User.Identity.Name;
+          ///  accountNumber = db.Partners.Where(p => p.email == email).FirstOrDefault().accountNumber;
+        }
+        return accountNumber;
+    }
+
+    string imgSrc_ImageData1 = "";
+
+    InputFile inputy;
+    public async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            MemoryStream ms = new MemoryStream();
+            Stream stream = file.OpenReadStream();
+            await stream.CopyToAsync(ms);
+            stream.Close();
+            ImageDatax = ms.ToArray();
+            ms.Close();
+            ms.Dispose();
+            imgSrc_ImageData1 = ClassLibraryUtil.ClassImageUtil.get_image_base64(ImageDatax);
+            StateHasChanged();
+        }
+
+    }
+
+    public byte[] ImageDatax
+    {
+        get
+        {
+            return currentUser.logo;
+        }
+        set
+        {
+            currentUser.logo = value;
+            StateHasChanged();
+        }
+    }
+
+
+}

@@ -5,27 +5,55 @@
 @using Microsoft.AspNetCore.Components.Rendering;
 @using Microsoft.EntityFrameworkCore;
 
-
 <h3>Customers</h3>
 
+    
 
-<div class="customers-list">
-    <h5>Customers</h5>
+
+<div >
+    <span style="float:right">
+        <button class="btn btn-primary" @onclick="() => DbContext.SaveChanges()">Save</button>
+        <button class="btn btn-success" @onclick="() => add()">Add</button>
+    </span>
+
     <table class="table">
         <thead>
             <tr>
                 <th>Name</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Group</th>
+                <th>Orders</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var customer in customers)
             {
                 <tr>
-                    <td>@customer.Name</td>
-                    <td>@customer.Email</td>
-                    <td>@customer.Phone</td>
+                    <td>
+                        <input type="text" @bind-value="@customer.Name" class="form-control" />
+                    </td>
+                    <td>
+                        <input type="email" @bind-value="@customer.Email" class="form-control" />
+                    </td>
+                    <td>
+                        <input type="tel" @bind-value="@customer.Phone" class="form-control" />
+                    </td>
+                    <td>
+                        <input type="text" @bind-value="@customer.CustGroup" class="form-control" />
+                    </td>
+                    <td>
+                        @if (@customer.Orders.Count()==0)
+                        {
+                        <button class="btn btn-danger btn-sm" @onclick="() => Delete(customer)">
+                            <i class="bi bi-trash">X</i>
+                            </button>
+                        }
+                        else
+                        {
+                            @customer.Orders.Count()
+                        }
+                    </td>
                 </tr>
             }
         </tbody>
@@ -37,13 +65,26 @@
 @code {
 
     DbContextMainData DbContext = new DbContextMainData();
-
     private List<Customer> customers { get; set; } = new List<Customer>();
-
     protected override async Task OnInitializedAsync()
     {
-        customers = DbContext.Pos_Customers.ToList();
+        customers = DbContext.Pos_Customers.Include(o => o.Orders).ToList();
     }
 
 
+    private void Delete(Customer cust)
+    {
+        customers.Remove(cust);//= DbContext.Pos_Customers.Include(o => o.Orders).ToList();
+        DbContext.Pos_Customers.Remove(cust);
+        // os.DeleteOrderAsync(order.Id);
+        //Orders = Orders.Where(o => o.Id != order.Id);
+    }
+
+    private void add( )
+    {
+        Customer cust = new Customer();
+        cust.Orders = new List<Order>();
+        customers.Add(cust);//= DbContext.Pos_Customers.Include(o => o.Orders).ToList();
+        DbContext.Pos_Customers.Add(cust);
+    }
 }

@@ -46,9 +46,29 @@ namespace BlazorAppSales.Data
             return await _dbContext.Pos_Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Items)
+                
+
                     .ThenInclude(oi => oi.Product)
+                    .Include(o => o.shift).OrderByDescending(o=>o.Id)
                 .ToListAsync();
         }
+
+ 
+
+        public async Task DeleteOrderAsync(int orderId)
+        {
+            var order = await _dbContext.Pos_Orders.FindAsync(orderId);
+
+            if (order == null)
+            {
+                throw new Exception($"Order with ID {orderId} not found.");
+            }
+
+            _dbContext.Pos_Orders.Remove(order);
+            await _dbContext.SaveChangesAsync();
+        }
+
+
 
         public async Task<Order> PlaceOrderx(Order order)
         {

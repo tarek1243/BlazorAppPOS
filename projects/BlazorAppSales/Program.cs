@@ -1,6 +1,8 @@
 using BlazorAppSales.Areas.Identity;
 using BlazorAppSales.Data;
+using Blazored.Toast;
 using ClassLibraryModels;
+using DocumentFormat.OpenXml.Office2016.Drawing.ChartDrawing;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Web;
@@ -56,6 +58,7 @@ namespace BlazorAppSales
            builder.Services.AddTransient<OrderService>();
             builder.Services.AddTransient<ShiftService>();
 
+            builder.Services.AddBlazoredToast();
 
             //.AddEntityFrameworkStores<ApplicationDbContext>()
             ///added for testing only

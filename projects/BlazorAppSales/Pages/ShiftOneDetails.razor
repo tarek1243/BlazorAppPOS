@@ -6,7 +6,7 @@
 
 @if (shift != null)
 {
-    <h2>Shift Id: @shift.Id</h2>
+    <h2>Id: @shift.Id</h2>
     <h3>Employee Number: @shift.EmployeeNumber</h3>
     <h3>Branch: @shift.Branch</h3>
     <h3>Company: @shift.CompanyName</h3>
@@ -27,7 +27,7 @@
             @foreach (var order in shift.Orders)
             {
                 <tr>
-                    <td><a href="@($"/orders/{order.Id}")">@order.Id</a></td>
+                    <td><a href="@($"/order/{order.Id}")">@order.Id</a></td>
                     <td>@order.customer_name</td>
                     <td>@order.Total</td>
                     <td>@order.OrderDate</td>

@@ -38,7 +38,7 @@ else
                     <td>
                         @*<input class="form-control" value="@product.Tags" @onchange="() => UpdateProductTags(product)" />*@
                         @if (product.ProductTags == null) { product.ProductTags = new List<ProductTag>(); }
-                        <input list="texts" multiple type="email" value="@string.Join(", ", product.ProductTags)" @onchange="@(e => UpdateProductTags(product, e.Value.ToString()))" />
+                        <input class="form-control" list="texts" multiple type="email" value="@string.Join(", ", product.ProductTags)" @onchange="@(e => UpdateProductTags(product, e.Value.ToString()))" />
                     </td>
                     <td>
                         <button class="btn btn-primary" @onclick="() => EditProduct(product)">Save</button>
@@ -52,19 +52,17 @@ else
 
 
 @code {
+
     private List<Product> products;
     private ProductService productService;
     List<string> productTags = new List<string>();
+
     protected override async Task OnInitializedAsync()
     {
         productService = new ProductService();
         products = await productService.GetProductsAsync();
         productTags = await productService.GetProductsTagsAsync();
     }
-
-
-
-
 
     private async void UpdateProductTags(Product product, string newTags)
     {

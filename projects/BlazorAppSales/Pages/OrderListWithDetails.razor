@@ -2,12 +2,11 @@
 
 @using BlazorAppSales.Data;
 
-
-
 <div class="fancy-div">
     <table class="table">
         <thead>
             <tr>
+                <th>Shift #</th>
                 <th>Order Id</th>
                 <th>Customer</th>
                 <th>Date</th>
@@ -19,15 +18,67 @@
             @if (Orders != null)
                 @foreach (var order in Orders)
                 {
-                    <tr>
-                        <td>@order.Id</td>
-                        <td>@order.customer_name</td>
-                        <td>@order.OrderDate.ToString("g")</td>
-                        <td>@order.Total.ToString("C")</td>
-                        <td>
-                            <button class="btn btn-primary" @onclick="() => ViewOrder(order)">View</button>
-                        </td>
-                    </tr>
+                    @if (latestShift != @order.shift_Id)
+                    {
+                        <tr style=" padding: 0; margin: 0; height:100%;    background-color: #C0C0C0;">
+                            @{
+                                latestShift = order.shift_Id;
+                            }
+                            <td colspan="1">
+                                <button class="btn btn-primary" @onclick="() => showShiftOrders(order.shift)">+</button>
+
+                                @order.shift_Id
+                            </td>
+
+                            <td colspan="1">
+                                Shift Total
+                                @if (@order.shift != null)
+                                    @if (@order.shift.TotalSales != null)
+                                    {
+                                        @order.shift.TotalSales
+                                    }
+                            </td>
+                            @if (@order.shift != null)
+
+                                @if (@order.shift.OpenedAt != null)
+                                {
+                                    <td colspan="1">From  @order.shift.OpenedAt</td>
+                                }
+                            @if (@order.shift != null)
+
+                                @if (@order.shift.ClosedAt != null)
+                                {
+                                    <td colspan="1">To  @order.shift.ClosedAt</td>
+                                }
+                            <td colspan="1"></td>
+                            <td colspan="1"></td>
+                        </tr>
+
+                    }
+
+                    @if (order.shift.ShowLines)
+                    {
+                        <tr>
+                            @if (latestShift != @order.shift_Id)
+                            {
+                                <td class="centered" style=" padding: 0; margin: 0; height:100%;    background-color: #4CAF50;" rowspan='@Orders.Where(o => o.shift_Id==@order.shift_Id).Count()'>
+                                    <div style="width: 100%; height: 100%;">
+                                        @order.shift_Id
+                                    </div>
+                                </td>
+                            }
+                            <td>@order.Id</td>
+                            <td>@order.customer_name</td>
+                            <td>@order.OrderDate.ToString("g")</td>
+                            <td>@order.Total.ToString("C")</td>
+                            <td>
+                                <button class="btn btn-primary" @onclick="() => ViewOrder(order)">View</button>
+                                <button class="btn btn-danger btn-sm" @onclick="() => Delete(order)">
+                                    <i class="bi bi-trash">X</i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
                 }
         </tbody>
     </table>
@@ -36,27 +87,28 @@
 {
     <div class="fancy-div">
         <div class="card">
-            <div class="card-header">
-                <h3>Order Details</h3>
-            </div>
+            @*         <div class="card-header">
+        </div>*@
             <div class="card-body ">
+                <h3>Order Details</h3>
+
                 <OrderSummary order="@SelectedOrder" />
             </div>
         </div>
     </div>
 }
 @code {
-    
+    int latestShift = -1;
     private Order SelectedOrder;
 
     //[Parameter]
     //public List<Order> Orders { get; set; }
 
     IEnumerable<Order> Orders;
+    OrderService os = new OrderService();
 
     protected override async Task OnInitializedAsync()
     {
-        OrderService os = new OrderService();
 
         Orders = await os.GetAllOrders();
     }
@@ -65,4 +117,16 @@
     {
         SelectedOrder = order;
     }
+
+    private void Delete(Order order)
+    {
+        os.DeleteOrderAsync(order.Id);
+        Orders = Orders.Where(o => o.Id != order.Id);
+    }
+    private void showShiftOrders(Shift shift)
+    {
+        shift.ShowLines = !shift.ShowLines;
+    }
+
+
 }

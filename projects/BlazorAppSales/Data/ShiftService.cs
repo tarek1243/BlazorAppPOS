@@ -24,6 +24,7 @@ namespace BlazorAppSales.Data
         {
             var shifts = await _dbContext.Pos_Shifts
                 .Include(s => s.Orders)
+                .ThenInclude(s => s.Items)
                 .ToListAsync();
 
             foreach (var shift in shifts)
