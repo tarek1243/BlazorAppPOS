@@ -8,7 +8,6 @@ using System.Linq;
 using System.Threading.Tasks;
 
 
- 
 
 namespace Util
 {
@@ -60,8 +59,10 @@ namespace Util
 
         */
 
+        // @inject AuthenticationStateProvider AuthenticationStateProvider
+        //Util.ClassCurrentSessionUtil.GetUserEmail
 
-        public static async Task<string> GetUserEmail(            AuthenticationStateProvider authenticationStateProvider          )
+        public static async Task<string> GetUserEmail(AuthenticationStateProvider authenticationStateProvider          )
         {
             // @inject AuthenticationStateProvider AuthenticationStateProvider
             string email = "";

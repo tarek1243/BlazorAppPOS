@@ -1,0 +1,40 @@
+﻿.big-fancy-div {
+    width: 500px;
+    height: 300px;
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    margin: 50px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #333333;
+    cursor: pointer;
+}
+
+#login {
+    background-color: ivory  ;
+}
+
+#register {
+    background-color: #eee9e9;
+}
+
+
+
+
+
+
+
+
+
+.big-fancy-div-container {
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+    align-items: center;
+    justify-content: center;
+    color: #333333;
+    cursor: pointer;
+}

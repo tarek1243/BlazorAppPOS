@@ -1,96 +1,144 @@
-﻿@page "/shiftsDetails"
+﻿@page "/ShiftsDetails"
 @using BlazorAppSales.Data;
+@using ClassLibraryModels;
 @inject ShiftService ShiftService
+<AuthorizeView>
+    <Authorized>
+        <h1>Shifts</h1>
 
-<h1>Shifts</h1>
+        @if (shifts != null)
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Employee Number</th>
+                        <th>Branch</th>
+                        <th>Company</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Order Count</th>
+                        <th>Total Sales</th>
 
-@if (shifts != null)
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Employee Number</th>
-                <th>Branch</th>
-                <th>Company</th>
-                <th>Start Time</th>
-                <th>End Time</th>
-                <th>Order Count</th>
-                <th>Total Sales</th>
+                    </tr>
+                </thead>
+                <tbody>
 
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var shift in shifts.Where(s => s.Orders.Count()>0))
-            {
-                <tr>
-                    <td>
-                        <button class="btn btn-primary" @onclick="() =>  shift.ShowLines=!shift.ShowLines ">
-                            @if (shift.ShowLines)
-                            {
-                                <span>-</span>
-                            }
-                            else
-                            {
-                                <span>+</span>
-                            }
-                            </button>
-                        <a href="@($"/shifts/{shift.Id}")">@shift.Id</a>
-                    </td>
-                    <td>@shift.EmployeeNumber</td>
-                    <td>@shift.Branch</td>
-                    <td>@shift.CompanyName</td>
-                    <td>@shift.OpenedAt</td>
-                    <td>@shift.ClosedAt</td>
-                    <td>@shift.Orders.Count()</td>
-                    <td>@shift.Orders.Sum(o => o.Total)</td>
-
-                </tr>
-
-                @if (shift.ShowLines)
-                {
-                    @if (shift.Orders.Count > 0)
-                    {
-                        <tr>
-                            <th></th>
-                            <th>Order Id</th>
-                            <th>Customer</th>
-                            <th>Date</th>
-                            <th>Total</th>
-                            <th>Lines</th>
-                        </tr>
-                    }
-
-                    @foreach (var order in shift.Orders)
+                    @foreach (var shift in shifts.Where(s => s.Orders.Count() > 0))
                     {
 
+
                         <tr>
-                            <td><a href="@($"/order/{order.Id}")">@order.Id</a></td>
-                            <td>@order.Id</td>
-                            <td>@order.customer_name</td>
-                            <td>@order.OrderDate.ToString("g")</td>
-                            <td>@order.Total.ToString("C")</td>
                             <td>
-                                @if (@order.Items != null)
-                                    @order.Items.Count()
-                                </td>
-                            </tr>
+                                <button class="btn btn-primary" @onclick="() =>  shift.ShowLines=!shift.ShowLines ">
+                                    @if (shift.ShowLines)
+                                    {
+                                        <span>-</span>
+                                    }
+                                    else
+                                    {
+                                        <span>+</span>
+                                    }
+                                </button>
+                                <a href="@($"/shifts/{shift.Id}")">@shift.Id</a>
+                            </td>
+                            <td>@shift.EmployeeNumber</td>
+                            <td>@shift.Branch</td>
+                            <td>@shift.CompanyName</td>
+                            <td>@shift.OpenedAt</td>
+                            <td>@shift.ClosedAt</td>
+                            <td>@shift.Orders.Count()</td>
+                            <td>@shift.Orders.Sum(o => o.Total)</td>
+
+                        </tr>
+
+                        @if (shift.ShowLines)
+                        {
+
+                            @if (shift.Orders.Count > 0)
+                            {
+                                <tr>
+                                    <td colspan="6">
+                                        <div id="login" class="big-fancy-div-container" @onclick="() =>  shift.ShowLines=!shift.ShowLines ">
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Order Id</th>
+                                                        <th>Customer</th>
+                                                        <th>Date</th>
+                                                        <th>Total</th>
+                                                        <th>Lines</th>
+
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    @foreach (var order in shift.Orders)
+                                                    {
+                                                        <tr>
+                                                            <td><a href="@($"/order/{order.Id}")">@order.Id</a></td>
+                                                            <td>@order.customer_name</td>
+                                                            <td>@order.OrderDate.ToString("g")</td>
+                                                            <td>@order.Total.ToString("C")</td>
+                                                            <td>
+                                                                @if (@order.Items != null)
+                                                                    @order.Items.Count()
+
+
+
+
+                                                                </td>
+                                                            </tr>
+                                                    }
+                                                </tbody>
+                                                </table>
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            }
+
+                        }
                     }
-                }
-            }
-        </tbody>
-    </table>
-}
-else
-{
-    <p>Loading...</p>
-}
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Loading...</p>
+        }
+    </Authorized>
+    <NotAuthorized>
+        <div id="login" class="big-fancy-div" onclick="window.location.href='Identity/Account/Login'">
+            Log In
+        </div>
+
+        <div id="register" class="big-fancy-div" onclick="window.location.href='Identity/Account/Register'">
+            Register
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@inject AuthenticationStateProvider authenticationStateProvider
 
 @code {
-    private List<Shift> shifts;
 
+    // @inject AuthenticationStateProvider authenticationStateProvider
+    //Util.ClassCurrentSessionUtil.GetUserEmail
+
+    private List<Shift> shifts;
+    ApplicationDbContext db_identity = new ApplicationDbContext();
+    WebApp1User currentUser;
     protected override async Task OnInitializedAsync()
     {
-        shifts = await ShiftService.GetShiftsWithOrdersSummary();
+        string currentUserEmail = await Util.ClassCurrentSessionUtil.GetUserEmail(authenticationStateProvider);
+
+        if (currentUserEmail != "")
+        {
+            currentUser = db_identity.Users.Where(u => u.Email == currentUserEmail).First();
+            shifts = await ShiftService.GetShiftsWithOrdersSummary(currentUser.CompanyName);
+            if (shifts.Count()>0)
+            shifts[0].ShowLines = true;
+        }
     }
 }

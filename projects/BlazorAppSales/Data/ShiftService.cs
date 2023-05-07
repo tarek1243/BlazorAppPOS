@@ -31,10 +31,22 @@ namespace BlazorAppSales.Data
             {
                 shift.Orders = shift.Orders.OrderByDescending(o => o.OrderDate).ToList();
             }
-
             return shifts;
         }
+        public async Task<List<Shift>> GetShiftsWithOrdersSummary(string companyName)
+        {
+            var shifts = await _dbContext.Pos_Shifts
+                .Where  (s => s.CompanyName == companyName).OrderByDescending (s=> s.OpenedAt) 
+                .Include(s => s.Orders)
+                .ThenInclude(s => s.Items)
+                .ToListAsync();
 
+            foreach (var shift in shifts)
+            {
+                shift.Orders = shift.Orders.OrderByDescending(o => o.OrderDate).ToList();
+            }
+            return shifts;
+        }
 
 
         public async Task<Shift> GetShiftAsync(int id)

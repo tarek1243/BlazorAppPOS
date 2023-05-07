@@ -141,9 +141,10 @@ namespace BlazorAppSales.Pages.General
                     TotalSales = 0,
                     TotalPayments = 0,
                     Orders = new List<Order>(),
-                    EmployeeNumber = "12345",
-                    Branch = "Main Branch",
-                    CompanyName = "ACME Inc."
+                    EmployeeNumber = currentUser.EmployeeNumber,// "12345",
+                    Branch = currentUser.branch,// "Main Branch",
+                    CompanyName = currentUser.CompanyName //"ACME Inc."
+
                 };
 
                 // Add the new shift to the database and save the changes
