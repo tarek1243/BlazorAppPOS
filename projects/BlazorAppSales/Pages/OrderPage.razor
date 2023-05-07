@@ -52,8 +52,8 @@ https://localhost:7092/order-receipt/1058
                     </thead>
                     <tbody>
                         @if (order != null)
-                            @if (order.Items != null)
-                                @foreach (var item in order.Items)
+                            @if (order.OrderLines != null)
+                                @foreach (var item in order.OrderLines)
                                 {
                                     <tr>
                                         <td>@item.Product.Name</td>
@@ -130,7 +130,7 @@ https://localhost:7092/order-receipt/1058
 
             //builder.AddContent(4, "item.Product.Name");
 
-            if (order == null || order.Items == null)
+            if (order == null || order.OrderLines == null)
                 return;
             builder.OpenElement(0, "div");
             //builder.AddContent(1, "Order Details:");

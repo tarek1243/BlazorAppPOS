@@ -18,7 +18,7 @@ namespace BlazorAppSales.Data
         {
             var shifts = await _dbContext.Pos_Customers
                 .Include(s => s.Orders)
-                .ThenInclude(s => s.Items)
+                .ThenInclude(s => s.OrderLines)
                 .ToListAsync();
 
             foreach (var shift in shifts)
@@ -32,7 +32,7 @@ namespace BlazorAppSales.Data
             var customers = await _dbContext.Pos_Customers   
                 .Where  (s => s.CompanyName == companyName).OrderByDescending (s=> s.created_Date) 
                 .Include(s => s.Orders)
-                .ThenInclude(s => s.Items).ThenInclude(i => i.Product)
+                .ThenInclude(s => s.OrderLines).ThenInclude(i => i.Product)
                 .ToListAsync();
 
             foreach (var shift in customers)

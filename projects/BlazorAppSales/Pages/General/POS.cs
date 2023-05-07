@@ -20,7 +20,7 @@ namespace BlazorAppSales.Pages.General
         private List<Product>? ProductsAll { get; set; }
         private List<Product>? Products { get; set; }
         private List<Order>? Orders { get; set; }
-        private List<CartItem>? Cart { get; set; }
+        private List<OrderLine>?  orderLines { get; set; }
         private List<Customer>? customers { get; set; } = new List<Customer>();
 
         List<string> productTags = new List<string>();
@@ -75,7 +75,7 @@ namespace BlazorAppSales.Pages.General
             Products = DbContext.Pos_Products.Include(p=>p.ProductTags).ToList();
             Orders = DbContext.Pos_Orders.ToList();
             customers = DbContext.Pos_Customers.ToList();
-            Cart = new List<CartItem>();
+            orderLines = new List<OrderLine>();
 
 
             productService = new ProductService();
@@ -88,11 +88,11 @@ namespace BlazorAppSales.Pages.General
         }
         private void AddToCart(Product product)
         {
-            var cartItem = Cart.FirstOrDefault(item => item.Product.Id == product.Id);
+            var cartItem = orderLines.FirstOrDefault(item => item.Product.Id == product.Id);
             if (cartItem == null)
             {
-                cartItem = new CartItem { Product = product, Quantity = 1  , Price= product.Price};
-                Cart.Add(cartItem);
+                cartItem = new OrderLine { Product = product, Quantity = 1  , Price= product.Price};
+                orderLines.Add(cartItem);
             }
             else
             {
@@ -193,6 +193,7 @@ namespace BlazorAppSales.Pages.General
         {
             return orderPage1;
         }
+        //private readonly ILoyaltyProgramService _loyaltyProgramService;
 
         private async Task PlaceOrder(OrderPage orderPage1)
         {
@@ -226,24 +227,37 @@ namespace BlazorAppSales.Pages.General
             order.InvoiceNumber = companyInvoiceNumber.LastInvoiceNumber;
 
 
-            order.Items = Cart;
+
+
+
+            order.OrderLines = orderLines;
             order.CustomerId = selectedCustomer.Id;
             order.customer_name = selectedCustomer.Name;
             order.CompanyId = currentCompanyId;
             order.company_name = currentCompanyName;
             order.OrderDate = DateTime.UtcNow;
 
-            order.Total = order.Items.Sum(o => (o.Quantity * o.Product.Price));
+            order.Total = order.OrderLines.Sum(o => (o.Quantity * o.Product.Price));
 
             Shift currentShift = await DbContext.Pos_Shifts.FirstOrDefaultAsync(s => s.IsOpen);
             order.shift_Id = currentShift.Id;
             order.shift = currentShift;
 
+
+
+
+            LoyaltyProgramService _loyaltyProgramService = new LoyaltyProgramService();
+            int loyaltyPointsEarned = _loyaltyProgramService.CalculateLoyaltyPointsEarned(order.Total);
+            order.LoyaltyPointsEarned = loyaltyPointsEarned;
+            selectedCustomer.LoyaltyPoints += order.LoyaltyPointsEarned;
+            DbContext.Pos_Customers.Attach(selectedCustomer);
+
+
             DbContext.Pos_Orders.Add(order);
             //AddOrderToShift(order);
             await DbContext.SaveChangesAsync();
             Orders.Add(order);
-            Cart = new List<CartItem>();
+            orderLines = new List<OrderLine>();
             Total = 0;
             //await jsRuntime.InvokeVoidAsync("printQRCode", order.Id);
             ShiftTotalSales += order.Total;

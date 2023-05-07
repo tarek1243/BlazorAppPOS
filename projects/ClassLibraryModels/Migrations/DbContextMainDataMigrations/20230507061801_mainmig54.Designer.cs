@@ -4,6 +4,7 @@ using BlazorAppSales.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 {
     [DbContext(typeof(DbContextMainData))]
-    partial class DbContextMainDataModelSnapshot : ModelSnapshot
+    [Migration("20230507061801_mainmig54")]
+    partial class mainmig54
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,16 +129,7 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                     b.Property<int>("InvoiceNumber")
                         .HasColumnType("int");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
-                    b.Property<int>("LoyaltyPointsEarned")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("OrderDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime?>("PaidAt")
                         .HasColumnType("datetime2");
 
                     b.Property<bool>("ShowLines")
@@ -205,52 +199,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                     b.HasIndex("ProductId");
 
                     b.ToTable("Pos_OrderLines");
-                });
-
-            modelBuilder.Entity("BlazorAppSales.Data.Pos_MethodOfPayment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Pos_MethodOfPayment");
-                });
-
-            modelBuilder.Entity("BlazorAppSales.Data.Pos_OrderPayment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("MethodOfPaymentId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("OrderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("pos_MethodOfPaymentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("pos_MethodOfPaymentId");
-
-                    b.ToTable("Pos_OrderPayment");
                 });
 
             modelBuilder.Entity("BlazorAppSales.Data.Product", b =>
@@ -444,25 +392,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("BlazorAppSales.Data.Pos_OrderPayment", b =>
-                {
-                    b.HasOne("BlazorAppSales.Data.Order", "order")
-                        .WithMany("Pos_OrderPayments")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("BlazorAppSales.Data.Pos_MethodOfPayment", "pos_MethodOfPayment")
-                        .WithMany()
-                        .HasForeignKey("pos_MethodOfPaymentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("order");
-
-                    b.Navigation("pos_MethodOfPayment");
-                });
-
             modelBuilder.Entity("BlazorAppSales.Data.Product", b =>
                 {
                     b.HasOne("BlazorAppSales.Data.Company", "Company")
@@ -515,8 +444,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
             modelBuilder.Entity("BlazorAppSales.Data.Order", b =>
                 {
                     b.Navigation("OrderLines");
-
-                    b.Navigation("Pos_OrderPayments");
                 });
 
             modelBuilder.Entity("BlazorAppSales.Data.Product", b =>

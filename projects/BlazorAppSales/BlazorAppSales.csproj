@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <Content Remove="Pages\General\OrderReceipt.razor" />
+    <Content Remove="Pages\OrderLineList.razor" />
   </ItemGroup>
 
  

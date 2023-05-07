@@ -10,7 +10,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in OrderLines)
+@*        @foreach (var item in OrderLines)
         {
             <tr>
                 <td>@item.ProductName</td>
@@ -18,11 +18,11 @@
                 <td>@item.Quantity</td>
                 <td>@item.LineAmount.ToString("C")</td>
             </tr>
-        }
+        }*@
     </tbody>
 </table>
 
 @code {
-    [Parameter]
-    public List<OrderItem> OrderLines { get; set; }
+    //B[Parameter]
+   // public List<OrderItem> OrderLines { get; set; }
 }

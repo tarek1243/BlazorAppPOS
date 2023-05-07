@@ -45,7 +45,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach (var line in order.Items)
+                        @foreach (var line in order.OrderLines)
                     {
                         <tr>
                             <td>@line.Product.Name</td>

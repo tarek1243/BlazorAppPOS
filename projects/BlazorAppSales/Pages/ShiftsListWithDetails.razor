@@ -54,49 +54,12 @@
 
                         @if (shift.ShowLines)
                         {
-
                             @if (shift.Orders.Count > 0)
                             {
                                 <tr>
                                     <td colspan="6">
-                                        <div id="orders" class="big-fancy-div-container">
-                                            <table class="table">
-                                                <thead>
-                                                    <tr>
-                                                        <th>Order Id</th>
-                                                        <th>Customer</th>
-                                                        <th>Date</th>
-                                                        <th>Total</th>
-                                                        <th>Lines</th>
-                                                        <th></th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    @foreach (var order in shift.Orders)
-                                                    {
-                                                        <tr>
-                                                            <td><a target="_blank" href="@($"/order/{order.Id}")">@order.Id</a></td>
-                                                            <td>@order.customer_name</td>
-                                                            <td>@order.OrderDate.ToString("g")</td>
-                                                            <td>@order.Total.ToString("C")</td>
-                                                            <td>
-                                                                @if (@order.Items != null)
-                                                                    @order.Items.Count()
-
-                                                                </td>
-
-                                                                <td>
-                                                                    <button class="btn btn-primary" @onclick="() => ViewOrder(order)">View</button>
-                                                                    <button class="btn btn-danger btn-sm" @onclick="() => Delete(order)">
-                                                                        <i class="bi bi-trash">X</i>
-                                                                    </button>
-                                                                </td>
-                                                            </tr>
-
-                                                    }
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <BlazorAppSales.Pages.Components.ListOfOrdersComponent orders=shift.Orders></BlazorAppSales.Pages.Components.ListOfOrdersComponent>
+                                         
                                     </td>
                                 </tr>
                             }
@@ -111,20 +74,7 @@
         }
 
 
-        @if (SelectedOrder != null)
-        {
-            <div class="fancy-div">
-                <div class="card">
-                    @*         <div class="card-header">
-                </div>*@
-                    <div class="card-body ">
-                        <h3>Order Details</h3>
-
-                        <OrderSummary order="@SelectedOrder" />
-                    </div>
-                </div>
-            </div>
-        }
+       
 
 
     </Authorized>
@@ -162,18 +112,10 @@
                 shifts[0].ShowLines = true;
         }
     }
-    private Order SelectedOrder;
 
-    private void ViewOrder(Order order)
-    {
-        SelectedOrder = order;
-    }
 
-    private void Delete(Order order)
-    {
-        os.DeleteOrderAsync(order.Id);
-        order.shift.Orders = order.shift.Orders.Where(o => o.Id != order.Id).ToList();
-    }
+
+
 
 
 }

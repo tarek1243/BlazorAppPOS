@@ -109,8 +109,8 @@ else
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @if (Cart != null)
-                                        @foreach (var item in Cart)
+                                    @if (orderLines != null)
+                                        @foreach (var item in orderLines)
                                         {
                                             <tr>
                                                 <td>@item.Product.Name</td>
@@ -129,7 +129,7 @@ else
 
                             @*   temppppp     *@
                             <div class="form-group">
-                                <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1))" disabled="@(!Cart.Any() || ShiftClosed)">Place Order</button>
+                                <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1))" disabled="@(!orderLines.Any() || ShiftClosed)">Place Order</button>
                             </div>
 
 

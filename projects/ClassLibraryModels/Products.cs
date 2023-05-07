@@ -10,7 +10,6 @@ namespace BlazorAppSales.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int ProductId { get; set; }
-
         public string Number { get; set; }
         public string Name { get; set; }
         [Column(TypeName = "decimal(18,2)")]
@@ -24,7 +23,6 @@ namespace BlazorAppSales.Data
         public List<ProductTag>? ProductTags { get; set; }
         //public List<Product> RelatedProducts { get; set; }
         public ICollection<RelatedProduct> RelatedProducts { get; set; }
-
     }
 
     public class RelatedProduct
@@ -37,7 +35,6 @@ namespace BlazorAppSales.Data
         public int Qty { get; set; } = 0;
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; } = 0;
-
     }
 
     public class ProductTag

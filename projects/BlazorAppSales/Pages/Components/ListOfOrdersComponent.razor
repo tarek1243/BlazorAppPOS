@@ -1,5 +1,76 @@
-﻿<h3>ListOfOrdersComponent</h3>
+﻿@using BlazorAppSales.Data;
+<div id="orders" class="big-fancy-div-container">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Order Id</th>
+                <th>Customer</th>
+                <th>Date</th>
+                <th>Total</th>
+                <th>Lines</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in orders)
+            {
+                <tr>
+                    <td><a target="_blank" href="@($"/order/{order.Id}")">@order.Id</a></td>
+                    <td>@order.customer_name</td>
+                    <td>@order.OrderDate.ToString("g")</td>
+                    <td>@order.Total.ToString("C")</td>
+                    <td>
+                        @if (@order.OrderLines != null)
+                            @order.OrderLines.Count()
 
+                        </td>
+
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => ViewOrder(order)">View</button>
+                            <button class="btn btn-danger btn-sm" @onclick="() => Delete(order)">
+                                <i class="bi bi-trash">X</i>
+                            </button>
+                        </td>
+                    </tr>
+
+            }
+        </tbody>
+    </table>
+</div>
+@if (SelectedOrder != null)
+{
+    <div class="fancy-div">
+        <div class="card">
+            @*         <div class="card-header">
+        </div>*@
+            <div class="card-body ">
+                <h3>Order Details</h3>
+
+                <OrderSummary order="@SelectedOrder" />
+            </div>
+        </div>
+    </div>
+}
 @code {
+    [Parameter]
+    public List<Order> orders { get; set; }
+
+
+    // @inject AuthenticationStateProvider authenticationStateProvider
+    //Util.ClassCurrentSessionUtil.GetUserEmail
+    OrderService os = new OrderService();
+        private void Delete(Order order)
+    {
+        os.DeleteOrderAsync(order.Id);
+        orders = orders.Where(o => o.Id != order.Id).ToList();
+    }
+
+    private Order SelectedOrder;
+
+    private void ViewOrder(Order order)
+    {
+        SelectedOrder = order;
+    }
+
 
 }
