@@ -1,7 +1,10 @@
 ﻿@page "/customers"
 @inject IJSRuntime jsRuntime
+@inject CustomerService  customerService
+@inject AuthenticationStateProvider authenticationStateProvider
 
 @using BlazorAppSales.Data;
+@using ClassLibraryModels;
 @using Microsoft.AspNetCore.Components.Rendering;
 @using Microsoft.EntityFrameworkCore;
 
@@ -66,23 +69,38 @@
 
     DbContextMainData DbContext = new DbContextMainData();
     private List<Customer> customers { get; set; } = new List<Customer>();
+    //protected override async Task OnInitializedAsync()
+    //{
+    //    customers = DbContext.Pos_Customers.Include(o => o.Orders).ToList();
+    //}
+
+
+
+    ApplicationDbContext db_identity = new ApplicationDbContext();
+    WebApp1User currentUser;
     protected override async Task OnInitializedAsync()
     {
-        customers = DbContext.Pos_Customers.Include(o => o.Orders).ToList();
-    }
+        string currentUserEmail = await Util.ClassCurrentSessionUtil.GetUserEmail(authenticationStateProvider);
 
+        if (currentUserEmail != "")
+        {
+            currentUser = db_identity.Users.Where(u => u.Email == currentUserEmail).First();
+            customers = await customerService.GetCustomersWithOrdersSummary(currentUser.CompanyName);
+            // if (customers.Count() > 0)
+            //   customers[0].ShowLines = true;
+        }
+    }
 
     private void Delete(Customer cust)
     {
         customers.Remove(cust);//= DbContext.Pos_Customers.Include(o => o.Orders).ToList();
         DbContext.Pos_Customers.Remove(cust);
-        // os.DeleteOrderAsync(order.Id);
-        //Orders = Orders.Where(o => o.Id != order.Id);
     }
 
     private void add( )
     {
         Customer cust = new Customer();
+        cust.CompanyName = currentUser.CompanyName; 
         cust.Orders = new List<Order>();
         customers.Add(cust);//= DbContext.Pos_Customers.Include(o => o.Orders).ToList();
         DbContext.Pos_Customers.Add(cust);

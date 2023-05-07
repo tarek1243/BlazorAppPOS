@@ -4,6 +4,7 @@ using BlazorAppSales.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 {
     [DbContext(typeof(DbContextMainData))]
-    partial class DbContextMainDataModelSnapshot : ModelSnapshot
+    [Migration("20230507030041_mainmig50")]
+    partial class mainmig50
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -112,9 +115,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("CustGroup")
                         .HasColumnType("nvarchar(max)");
 
@@ -126,12 +126,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.Property<string>("Phone")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<bool>("ShowLines")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime?>("created_Date")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -173,9 +167,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                     b.Property<string>("company_name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime?>("created_Date")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("customer_name")
                         .IsRequired()
@@ -321,9 +312,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                     b.Property<decimal>("TotalSales")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<DateTime?>("created_Date")
-                        .HasColumnType("datetime2");
-
                     b.HasKey("Id");
 
                     b.ToTable("Pos_Shifts");
@@ -341,7 +329,7 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.HasIndex("ProductsId");
 
-                    b.ToTable("Pos_ProductProductTag", (string)null);
+                    b.ToTable("ProductProductTag", (string)null);
                 });
 
             modelBuilder.Entity("BlazorAppSales.Data.CartItem", b =>

@@ -19,7 +19,9 @@
                     </tr>
                     <tr>
                         <th>Customer:</th>
-                        <td>@order.Customer.Name</td>
+                        <td>
+                            @if (order.Customer!=null)
+                            @order.Customer.Name</td>
                     </tr>
                     <tr>
                         <th>Employee:</th>

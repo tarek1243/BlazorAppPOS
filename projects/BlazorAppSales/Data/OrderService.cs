@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using DocumentFormat.OpenXml.InkML;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorAppSales.Data
 {
@@ -14,14 +15,14 @@ namespace BlazorAppSales.Data
 
     public class OrderService : IOrderService
     {
-        private readonly DbContextMainData _dbContext=new DbContextMainData();
+        private readonly DbContextMainData _dbContext = new DbContextMainData();
 
         /*        public OrderService(DbContextMainData dbContext)
                 {
                     _dbContext = dbContext;
                 }*/
 
-  
+
         public async Task<Order> GetOrderById(int orderId)
         {
             return await _dbContext.Pos_Orders
@@ -46,26 +47,37 @@ namespace BlazorAppSales.Data
             return await _dbContext.Pos_Orders
                 .Include(o => o.Customer)
                 .Include(o => o.Items)
-                
+
 
                     .ThenInclude(oi => oi.Product)
-                    .Include(o => o.shift).OrderByDescending(o=>o.Id)
+                    .Include(o => o.shift).OrderByDescending(o => o.Id)
                 .ToListAsync();
         }
 
- 
+
 
         public async Task DeleteOrderAsync(int orderId)
         {
-            var order = await _dbContext.Pos_Orders.FindAsync(orderId);
-
-            if (order == null)
+            Order o = _dbContext.Pos_Orders.Include(p => p.Items).Single(a => a.Id == orderId);
+            if (o.Items.Count() > 0)
             {
-                throw new Exception($"Order with ID {orderId} not found.");
+                o.Items.Clear();
+                //o.Items.RemoveRange(0, o.Items.Count() - 1);
+                _dbContext.Pos_Orders.Attach(o);
+                _dbContext.SaveChanges();
             }
+            _dbContext.Remove(o);
+            _dbContext.SaveChanges();
+            /*
+                        var order = await _dbContext.Pos_Orders.FindAsync(orderId);
 
-            _dbContext.Pos_Orders.Remove(order);
-            await _dbContext.SaveChangesAsync();
+                        if (order == null)
+                        {
+                            throw new Exception($"Order with ID {orderId} not found.");
+                        }
+
+                        _dbContext.Pos_Orders.Remove(order);
+                        await _dbContext.SaveChangesAsync();*/
         }
 
 
@@ -80,7 +92,7 @@ namespace BlazorAppSales.Data
         public async Task<int> PlaceOrder(Order order)
         {
             // Get the company for the customer
-           // var customer = await _dbContext.Customers.FindAsync(order.CustomerId);
+            // var customer = await _dbContext.Customers.FindAsync(order.CustomerId);
             var company = await _dbContext.Pos_Companies.FindAsync(order.CompanyId);
 
             // Get the last invoice number used for the company and increment it
@@ -100,5 +112,16 @@ namespace BlazorAppSales.Data
             return order.Id;
         }
     }
+
+
+ /*   public static class EntityExtensions
+    {
+        public static void Clearx<T>(this DbSet<T> dbSet) where T : class
+        {
+            dbSet.RemoveRange(dbSet);
+        }
+    }
+*/
+
 
 }

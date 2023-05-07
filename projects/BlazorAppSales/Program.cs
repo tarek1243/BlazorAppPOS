@@ -44,12 +44,6 @@ namespace BlazorAppSales
 
 
 
-
-
-
-
-
-
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor();
             builder.Services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
@@ -57,6 +51,7 @@ namespace BlazorAppSales
 
            builder.Services.AddTransient<OrderService>();
             builder.Services.AddTransient<ShiftService>();
+            builder.Services.AddTransient<CustomerService>();
 
             builder.Services.AddBlazoredToast();
 

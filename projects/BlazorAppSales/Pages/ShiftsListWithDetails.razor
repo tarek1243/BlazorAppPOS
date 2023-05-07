@@ -1,6 +1,9 @@
 ﻿@page "/ShiftsDetails"
 @using BlazorAppSales.Data;
 @using ClassLibraryModels;
+
+@inject AuthenticationStateProvider authenticationStateProvider
+
 @inject ShiftService ShiftService
 <AuthorizeView>
     <Authorized>
@@ -19,15 +22,12 @@
                         <th>End Time</th>
                         <th>Order Count</th>
                         <th>Total Sales</th>
-
                     </tr>
                 </thead>
                 <tbody>
 
                     @foreach (var shift in shifts.Where(s => s.Orders.Count() > 0))
                     {
-
-
                         <tr>
                             <td>
                                 <button class="btn btn-primary" @onclick="() =>  shift.ShowLines=!shift.ShowLines ">
@@ -59,7 +59,7 @@
                             {
                                 <tr>
                                     <td colspan="6">
-                                        <div id="login" class="big-fancy-div-container" @onclick="() =>  shift.ShowLines=!shift.ShowLines ">
+                                        <div id="orders" class="big-fancy-div-container">
                                             <table class="table">
                                                 <thead>
                                                     <tr>
@@ -68,14 +68,14 @@
                                                         <th>Date</th>
                                                         <th>Total</th>
                                                         <th>Lines</th>
-
+                                                        <th></th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
                                                     @foreach (var order in shift.Orders)
                                                     {
                                                         <tr>
-                                                            <td><a href="@($"/order/{order.Id}")">@order.Id</a></td>
+                                                            <td><a target="_blank" href="@($"/order/{order.Id}")">@order.Id</a></td>
                                                             <td>@order.customer_name</td>
                                                             <td>@order.OrderDate.ToString("g")</td>
                                                             <td>@order.Total.ToString("C")</td>
@@ -83,20 +83,23 @@
                                                                 @if (@order.Items != null)
                                                                     @order.Items.Count()
 
+                                                                </td>
 
-
-
+                                                                <td>
+                                                                    <button class="btn btn-primary" @onclick="() => ViewOrder(order)">View</button>
+                                                                    <button class="btn btn-danger btn-sm" @onclick="() => Delete(order)">
+                                                                        <i class="bi bi-trash">X</i>
+                                                                    </button>
                                                                 </td>
                                                             </tr>
+
                                                     }
                                                 </tbody>
-                                                </table>
+                                            </table>
                                         </div>
                                     </td>
                                 </tr>
-
                             }
-
                         }
                     }
                 </tbody>
@@ -106,6 +109,24 @@
         {
             <p>Loading...</p>
         }
+
+
+        @if (SelectedOrder != null)
+        {
+            <div class="fancy-div">
+                <div class="card">
+                    @*         <div class="card-header">
+                </div>*@
+                    <div class="card-body ">
+                        <h3>Order Details</h3>
+
+                        <OrderSummary order="@SelectedOrder" />
+                    </div>
+                </div>
+            </div>
+        }
+
+
     </Authorized>
     <NotAuthorized>
         <div id="login" class="big-fancy-div" onclick="window.location.href='Identity/Account/Login'">
@@ -119,12 +140,12 @@
 </AuthorizeView>
 
 
-@inject AuthenticationStateProvider authenticationStateProvider
 
 @code {
 
     // @inject AuthenticationStateProvider authenticationStateProvider
     //Util.ClassCurrentSessionUtil.GetUserEmail
+    OrderService os = new OrderService();
 
     private List<Shift> shifts;
     ApplicationDbContext db_identity = new ApplicationDbContext();
@@ -137,8 +158,22 @@
         {
             currentUser = db_identity.Users.Where(u => u.Email == currentUserEmail).First();
             shifts = await ShiftService.GetShiftsWithOrdersSummary(currentUser.CompanyName);
-            if (shifts.Count()>0)
-            shifts[0].ShowLines = true;
+            if (shifts.Count() > 0)
+                shifts[0].ShowLines = true;
         }
     }
+    private Order SelectedOrder;
+
+    private void ViewOrder(Order order)
+    {
+        SelectedOrder = order;
+    }
+
+    private void Delete(Order order)
+    {
+        os.DeleteOrderAsync(order.Id);
+        order.shift.Orders = order.shift.Orders.Where(o => o.Id != order.Id).ToList();
+    }
+
+
 }

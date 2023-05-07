@@ -2,22 +2,21 @@
 
 namespace BlazorAppSales.Data
 {
-    public interface IShiftService
+    public interface ICustomerService
     {
-        Task<List<Shift>> GetShiftsWithOrdersSummary();
+        Task<List<Customer>> GetCustomersWithOrdersSummary();
     }
 
-    public class ShiftService : IShiftService
+    public class CustomerService : ICustomerService
     {
         private readonly DbContextMainData _dbContext = new DbContextMainData();
-
-        public ShiftService()
+        public CustomerService()
         {
             _dbContext = new DbContextMainData(); 
         }
-        public async Task<List<Shift>> GetShiftsWithOrdersSummary()
+        public async Task<List<Customer>> GetCustomersWithOrdersSummary()
         {
-            var shifts = await _dbContext.Pos_Shifts
+            var shifts = await _dbContext.Pos_Customers
                 .Include(s => s.Orders)
                 .ThenInclude(s => s.Items)
                 .ToListAsync();
@@ -28,19 +27,19 @@ namespace BlazorAppSales.Data
             }
             return shifts;
         }
-        public async Task<List<Shift>> GetShiftsWithOrdersSummary(string companyName)
+        public async Task<List<Customer>> GetCustomersWithOrdersSummary(string companyName)
         {
-            var shifts = await _dbContext.Pos_Shifts
-                .Where  (s => s.CompanyName == companyName).OrderByDescending (s=> s.OpenedAt) 
+            var customers = await _dbContext.Pos_Customers   
+                .Where  (s => s.CompanyName == companyName).OrderByDescending (s=> s.created_Date) 
                 .Include(s => s.Orders)
                 .ThenInclude(s => s.Items).ThenInclude(i => i.Product)
                 .ToListAsync();
 
-            foreach (var shift in shifts)
+            foreach (var shift in customers)
             {
                 shift.Orders = shift.Orders.OrderByDescending(o => o.OrderDate).ToList();
             }
-            return shifts;
+            return customers;
         }
 
 
@@ -49,7 +48,10 @@ namespace BlazorAppSales.Data
             var shifts = await _dbContext.Pos_Shifts.Where(s => s.Id==id)
                 .Include(s => s.Orders)
                 .FirstOrDefaultAsync();
+
             return shifts;
         }
+
     }
+
 }

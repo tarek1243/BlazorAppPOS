@@ -32,6 +32,7 @@ namespace BlazorAppSales.Data
         public virtual DbSet<Product> Pos_Products { get; set; }
         public DbSet<ProductTag> Pos_ProductTags { get; set; }
         public virtual DbSet<Order> Pos_Orders { get; set; }
+        public virtual DbSet<CartItem>  Pos_CartItems { get; set; }
         public virtual DbSet<Customer> Pos_Customers { get; set; }
         public virtual DbSet<Shift> Pos_Shifts { get; set; }
         // Add a new table for storing the last invoice number used for each company
@@ -55,7 +56,7 @@ namespace BlazorAppSales.Data
             modelBuilder.Entity<ProductTag>()
                 .HasMany(pt => pt.Products)
                 .WithMany(p => p.ProductTags)
-                .UsingEntity(j => j.ToTable("ProductProductTag"));
+                .UsingEntity(j => j.ToTable("Pos_ProductProductTag"));
 
 
 
@@ -115,6 +116,8 @@ namespace BlazorAppSales.Data
         public int CompanyId { get; set; }
         public string company_name { get; set; } = "";
         public bool ShowLines { get; set; } = false;
+        public DateTime? created_Date { get; set; }=DateTime.Now;
+
     }
 
     public class OrderItem
@@ -152,6 +155,8 @@ namespace BlazorAppSales.Data
         public string CompanyName { get; set; }
         public List<Order> Orders { get; set; }
         public bool ShowLines { get; set; } = false;
+        public DateTime? created_Date { get; set; } = DateTime.Now;
+
     }
 
 
@@ -192,13 +197,20 @@ namespace BlazorAppSales.Data
     [TypeConverter(typeof(CustomerTypeConverter))]
     public class Customer
     {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public string? Name { get; set; } = "";
         public string? Email { get; set; } = "";
         public string? Phone { get; set; } = "";
         public string? CustGroup { get; set; } = "";
+        public string? CompanyName { get; set; } = "";
         public List<Order> Orders { get; set; }
         //public List<string> Tags { get; set; } = new List<string>();
+        public DateTime? created_Date { get; set; } = DateTime.Now;
+        public bool ShowLines { get; set; } = false;
+
+
 
         public override string ToString()
         {
