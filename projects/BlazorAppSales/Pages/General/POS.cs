@@ -4,13 +4,14 @@ using ClassLibraryModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
 using MyApp.Services;
-using System.Linq;
+
 
 namespace BlazorAppSales.Pages.General
 {
     public partial class POS : ComponentBase
     {
-
+     
+      
 
         private bool ShiftIsOpen { get { return !ShiftClosed; } set { ShiftClosed = !value; } } //= false;
 
@@ -20,11 +21,13 @@ namespace BlazorAppSales.Pages.General
         private List<Product>? ProductsAll { get; set; }
         private List<Product>? Products { get; set; }
         private List<Order>? Orders { get; set; }
-        private List<OrderLine>?  orderLines { get; set; }
+        private List<OrderLine>? orderLines { get; set; }
         private List<Customer>? customers { get; set; } = new List<Customer>();
 
-        List<string> productTags = new List<string>();
+        private List<Pos_MethodOfPayment>? pos_MethodOfPayments { get; set; } = new List<Pos_MethodOfPayment>();
+        private List<Pos_OrderPayment>? pos_OrderPayments { get; set; } = new List<Pos_OrderPayment>();
 
+        List<string> productTags = new List<string>();
         private decimal Total { get; set; }
         private bool ShiftClosed { get; set; } = true;
         private decimal ShiftTotalSales { get; set; }
@@ -32,11 +35,9 @@ namespace BlazorAppSales.Pages.General
         private decimal ShiftAverageSale { get; set; }
         DbContextMainData DbContext = new DbContextMainData();
         DbContextMainData db = new DbContextMainData();
-
-
-
+        ApplicationDbContext applicationDbContext = new();
         private Customer selectedCustomer { get; set; }
-  /*      private Customer newCustomer { get; set; } = new Customer();*/
+        /*      private Customer newCustomer { get; set; } = new Customer();*/
         private async Task CreateCustomer(Customer customer)
         {
             customers = DbContext.Pos_Customers.ToList();
@@ -48,31 +49,28 @@ namespace BlazorAppSales.Pages.General
             selectedCustomer = customer;
         }
 
-
-        ApplicationDbContext applicationDbContext = new();
-
         /// <summary>
         /// temppppp
         /// </summary>
         /// <param name="product"></param>
-       /* */ WebApp1User currentUser;
-        string currentUserEmail="";
-        bool isAdmin = false;
+        /* */
+        WebApp1User currentUser;
+        // bool isAdmin = false;
         private async Task ReadCurrent()
         {
-            currentUser = await Util .ClassCurrentSessionUtil.GetUser(authenticationStateProvider, applicationDbContext);
-            currentUserEmail = currentUser.Email;//  await ClassCurrentSessionUtil.GetUserEmail(authenticationStateProvider);
-            currentCompanyName = currentUser.CompanyName; 
+            currentUser = await Util.ClassCurrentSessionUtil.GetUser(authenticationStateProvider, applicationDbContext);
             //isAdmin = await Util.ClassCurrentSessionUtil.CheckIfUserHasRole(authenticationStateProvider, applicationDbContext, "Admin");
         }
 
         private ProductService productService;
-  
+
 
         protected override async Task OnInitializedAsync()
         {
+
+
             ProductsAll = DbContext.Pos_Products.ToList();
-            Products = DbContext.Pos_Products.Include(p=>p.ProductTags).ToList();
+            Products = DbContext.Pos_Products.Include(p => p.ProductTags).ToList();
             Orders = DbContext.Pos_Orders.ToList();
             customers = DbContext.Pos_Customers.ToList();
             orderLines = new List<OrderLine>();
@@ -80,18 +78,25 @@ namespace BlazorAppSales.Pages.General
 
             productService = new ProductService();
 
-           // productTags = await productService.GetProductsTagsAsync();
-           // productTags = await productService.GetProductsTagsLinkedWithProductsAsync();
-           var productTags_objects = await productService.GetProductTagsWithProducts();
+            // productTags = await productService.GetProductsTagsAsync();
+            // productTags = await productService.GetProductsTagsLinkedWithProductsAsync();
+            var productTags_objects = await productService.GetProductTagsWithProducts();
             productTags = productTags_objects.Select(t => t.Name).ToList();
             await ReadCurrent();
+
+
+            if (currentUser != null)
+            {
+                CustomerService cs = new CustomerService();
+                pos_MethodOfPayments = await cs.GetPos_MethodOfPayment_list(currentUser.CompanyName);
+            }
         }
         private void AddToCart(Product product)
         {
             var cartItem = orderLines.FirstOrDefault(item => item.Product.Id == product.Id);
             if (cartItem == null)
             {
-                cartItem = new OrderLine { Product = product, Quantity = 1  , Price= product.Price};
+                cartItem = new OrderLine { Product = product, Quantity = 1, Price = product.Price };
                 orderLines.Add(cartItem);
             }
             else
@@ -110,7 +115,7 @@ namespace BlazorAppSales.Pages.General
                 // Filter items based on search query
                 Products = ProductsAll.Where(i => i.Name.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase) || i.Number.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)).ToList();
             }
-           if (selectedTagFilter != "")
+            if (selectedTagFilter != "")
                 // Assuming you have a list of products named 'products' and a string variable named 'tagName' for the tag you want to filter by
                 Products = Products.Where(p => p.ProductTags.Any(t => t.Name.Contains(selectedTagFilter))).ToList();
 
@@ -193,9 +198,15 @@ namespace BlazorAppSales.Pages.General
         {
             return orderPage1;
         }
+
+        private List<Order>? GetOrders()
+        {
+            return Orders;
+        }
+
         //private readonly ILoyaltyProgramService _loyaltyProgramService;
 
-        private async Task PlaceOrder(OrderPage orderPage1)
+        private async Task PlaceOrder(OrderPage orderPage1, List<Order>? orders)
         {
             if (ShiftClosed)
                 return;
@@ -205,31 +216,26 @@ namespace BlazorAppSales.Pages.General
 
             var order = new Order { };// Items = Cart
 
-
-
             //var company = await DbContext.Companies.FindAsync(currentCompanyId);
             var company = await DbContext.Pos_Companies.Where(c => c.Name == currentCompanyName)
                 .FirstOrDefaultAsync();
-            if(company==null )
+            if (company == null)
                 company = await DbContext.Pos_Companies.FindAsync(defaultCompanyId);
 
             // Get the last invoice number used for the company and increment it
-            var companyInvoiceNumber = await DbContext.CompanyInvoiceNumbers
+            var companyInvoiceNumber = await DbContext.Pos_CompanyInvoiceNumbers
                 .Where(c => c.CompanyId == company.Id)
                 .FirstOrDefaultAsync();
 
             if (companyInvoiceNumber == null)
-                companyInvoiceNumber.LastInvoiceNumber=1;
+                companyInvoiceNumber.LastInvoiceNumber = 1;
             else
                 companyInvoiceNumber.LastInvoiceNumber++;
 
             // Assign the invoice number to the order
             order.InvoiceNumber = companyInvoiceNumber.LastInvoiceNumber;
 
-
-
-
-
+            order.Pos_OrderPayments = pos_OrderPayments;
             order.OrderLines = orderLines;
             order.CustomerId = selectedCustomer.Id;
             order.customer_name = selectedCustomer.Name;
@@ -243,9 +249,6 @@ namespace BlazorAppSales.Pages.General
             order.shift_Id = currentShift.Id;
             order.shift = currentShift;
 
-
-
-
             LoyaltyProgramService _loyaltyProgramService = new LoyaltyProgramService();
             int loyaltyPointsEarned = _loyaltyProgramService.CalculateLoyaltyPointsEarned(order.Total);
             order.LoyaltyPointsEarned = loyaltyPointsEarned;
@@ -256,8 +259,10 @@ namespace BlazorAppSales.Pages.General
             DbContext.Pos_Orders.Add(order);
             //AddOrderToShift(order);
             await DbContext.SaveChangesAsync();
-            Orders.Add(order);
+            orders.Add(order);
             orderLines = new List<OrderLine>();
+            pos_OrderPayments = new List<Pos_OrderPayment>();
+
             Total = 0;
             //await jsRuntime.InvokeVoidAsync("printQRCode", order.Id);
             ShiftTotalSales += order.Total;
@@ -277,8 +282,6 @@ namespace BlazorAppSales.Pages.General
         }
 
         public OrderPage orderPage1 { get; set; }
-
-
 
         public async Task AddOrderToShift(Order order)
         {

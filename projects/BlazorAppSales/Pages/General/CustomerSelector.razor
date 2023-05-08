@@ -5,7 +5,7 @@
 <label for="searchh">Customer</label>
 <div class="input-group">
     <input id="searchh" type="text" class="form-control" 
-    @bind-value="@searchText"  placeholder="SearchForCustomer"
+    @bind-value="@searchText"  placeholder="Search"
            @oninput="(e)=> searchText = e.Value.ToString()"
            @onkeydown="Search" />
     <button class="btn btn-outline-secondary" @onclick="Search"><i class="fa fa-search"></i></button>

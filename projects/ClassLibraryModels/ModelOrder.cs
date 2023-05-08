@@ -35,6 +35,11 @@ namespace BlazorAppSales.Data
         [Column(TypeName = "decimal(18,2)")]
         public decimal Total_With_VAT { get; set; } = 0;
         [Column(TypeName = "decimal(18,2)")]
+        public decimal Paid_Total_With_VAT { get; set; } = 0;
+        public decimal unPaid_remaining_Total_With_VAT { get; set; } = 0;
+
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal VAT_Amount { get; set; } = 0;
         public int CustomerId { get; set; }
         public Customer Customer { get; set; }
@@ -50,15 +55,10 @@ namespace BlazorAppSales.Data
         public bool ShowLines { get; set; } = false;
         public DateTime? created_Date { get; set; } = DateTime.Now;
         public int LoyaltyPointsEarned { get; set; }
-
         public List<OrderLine> OrderLines { get; set; }
         public List<Pos_OrderPayment>  Pos_OrderPayments { get; set; }
-
         public bool IsPaid { get; set; } = false;
         public DateTime? PaidAt { get; set; } 
-
-
-
 
     }
 
@@ -67,6 +67,8 @@ namespace BlazorAppSales.Data
     public class OrderLine
     {
         public int Id { get; set; }
+        [ForeignKey("Product")]
+        public int product_id { get; set; }
         public Product Product { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Quantity { get; set; }
@@ -83,10 +85,16 @@ namespace BlazorAppSales.Data
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
+        [ForeignKey("order")]
         public int OrderId { get; set; }
         public Order order { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
         public decimal Amount { get; set; }
+
+        [ForeignKey("pos_MethodOfPayment")]
         public int MethodOfPaymentId { get; set; }
         public Pos_MethodOfPayment pos_MethodOfPayment { get; set; }
+
     }
 }

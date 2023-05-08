@@ -4,6 +4,7 @@ using BlazorAppSales.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 {
     [DbContext(typeof(DbContextMainData))]
-    partial class DbContextMainDataModelSnapshot : ModelSnapshot
+    [Migration("20230507211738_mainmig57")]
+    partial class mainmig57
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -55,7 +58,7 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pos_CompanyInvoiceNumbers");
+                    b.ToTable("CompanyInvoiceNumbers");
 
                     b.HasData(
                         new
@@ -167,9 +170,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                     b.Property<int>("shift_Id")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("unPaid_remaining_Total_With_VAT")
-                        .HasColumnType("decimal(18,2)");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
@@ -230,7 +230,7 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Pos_MethodOfPayments");
+                    b.ToTable("Pos_MethodOfPayment");
                 });
 
             modelBuilder.Entity("BlazorAppSales.Data.Pos_OrderPayment", b =>

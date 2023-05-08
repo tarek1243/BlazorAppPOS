@@ -40,6 +40,7 @@ namespace BlazorAppSales.Data
                 .Include(o => o.Customer)
                 .Include(o => o.OrderLines)
                     .ThenInclude(oi => oi.Product)
+                    .Include(o =>o.Pos_OrderPayments)
                 .FirstOrDefaultAsync(o => o.Id == orderId);
         }
 
@@ -79,7 +80,6 @@ namespace BlazorAppSales.Data
             _dbContext.SaveChanges();
             /*
                         var order = await _dbContext.Pos_Orders.FindAsync(orderId);
-
                         if (order == null)
                         {
                             throw new Exception($"Order with ID {orderId} not found.");
@@ -104,7 +104,7 @@ namespace BlazorAppSales.Data
             var company = await _dbContext.Pos_Companies.FindAsync(order.CompanyId);
 
             // Get the last invoice number used for the company and increment it
-            var companyInvoiceNumber = await _dbContext.CompanyInvoiceNumbers
+            var companyInvoiceNumber = await _dbContext.Pos_CompanyInvoiceNumbers
                 .Where(c => c.CompanyId == company.Id)
                 .FirstOrDefaultAsync();
 

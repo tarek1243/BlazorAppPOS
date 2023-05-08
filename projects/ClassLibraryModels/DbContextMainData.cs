@@ -29,9 +29,10 @@ namespace BlazorAppSales.Data
         public virtual DbSet<Order> Pos_Orders { get; set; }
         public virtual DbSet<OrderLine> Pos_OrderLines { get; set; }
         public virtual DbSet<Customer> Pos_Customers { get; set; }
+        public virtual DbSet<Pos_MethodOfPayment>  Pos_MethodOfPayments { get; set; }
         public virtual DbSet<Shift> Pos_Shifts { get; set; }
         // Add a new table for storing the last invoice number used for each company
-        public DbSet<CompanyInvoiceNumber> CompanyInvoiceNumbers { get; set; }
+        public DbSet<CompanyInvoiceNumber> Pos_CompanyInvoiceNumbers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and constraints

@@ -1,0 +1,82 @@
+﻿@using BlazorAppSales.Data;
+<h3>PaymentButtonsComponent</h3>
+
+
+
+@if (!is_paying)
+{
+    @foreach (var p in pos_MethodOfPayments)
+    {
+        <button class="btn btn-outline-dark" @onclick="(() => pay1(p))">@p.Name</button>
+    }
+}
+else
+{
+    if (current_Pos_MethodOfPayment != null)
+    {
+        <input class="form-control" @bind-value="amount_to_pay" />
+        <button class="btn btn-outline-dark" @onclick="pay2">@current_Pos_MethodOfPayment.Name</button>
+    }
+}
+@if (unPaid_remaining_Total_With_VAT != 0)
+{
+    <span class="badge bg-danger ">@unPaid_remaining_Total_With_VAT</span>
+}
+
+
+@code {
+
+    [Parameter]
+    public List<Pos_OrderPayment> pos_OrderPayments { get; set; }
+
+
+    [Parameter]
+    public List<Pos_MethodOfPayment> pos_MethodOfPayments { get; set; }
+
+
+
+    [Parameter]
+    public decimal order_total { get; set; }
+
+    decimal amount_to_pay = 0;
+    decimal paid_amount = 0;
+    decimal unPaid_remaining_Total_With_VAT = 0;
+
+
+    bool is_paying = false;
+    Pos_MethodOfPayment? current_Pos_MethodOfPayment;
+    public void pay1(Pos_MethodOfPayment p)
+    {
+
+        paid_amount = pos_OrderPayments.Sum(x => x.Amount);
+        //order_total = orderLines.Sum(x => x.Total);
+        unPaid_remaining_Total_With_VAT = order_total - paid_amount;
+
+        amount_to_pay = unPaid_remaining_Total_With_VAT;// orderLines.Sum(x => x.Total);
+
+        is_paying = true;
+        current_Pos_MethodOfPayment = p;
+    }
+    public void pay2()
+    {
+        //CurrentOrder.unPaid_remaining_Total_With_VAT = payment_amount;
+        is_paying = false;
+
+        Pos_OrderPayment pos_OrderPayment = new Pos_OrderPayment();
+        pos_OrderPayment.MethodOfPaymentId = current_Pos_MethodOfPayment.Id;
+        pos_OrderPayment.Amount = amount_to_pay;
+        if (pos_OrderPayments == null)
+            pos_OrderPayments = new List<Pos_OrderPayment>();
+
+        pos_OrderPayments.Add(pos_OrderPayment);
+        current_Pos_MethodOfPayment = null;
+
+        paid_amount = pos_OrderPayments.Sum(x => x.Amount);
+        //order_total = orderLines.Sum(x => x.Total);
+
+        unPaid_remaining_Total_With_VAT = order_total - paid_amount;
+
+    }
+
+
+}

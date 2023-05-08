@@ -29,8 +29,8 @@ namespace BlazorAppSales.Data
         }
         public async Task<List<Customer>> GetCustomersWithOrdersSummary(string companyName)
         {
-            var customers = await _dbContext.Pos_Customers   
-                .Where  (s => s.CompanyName == companyName).OrderByDescending (s=> s.created_Date) 
+            var customers = await _dbContext.Pos_Customers
+                .Where(s => s.CompanyName == companyName).OrderByDescending(s => s.created_Date)
                 .Include(s => s.Orders)
                 .ThenInclude(s => s.OrderLines).ThenInclude(i => i.Product)
                 .ToListAsync();
@@ -41,16 +41,14 @@ namespace BlazorAppSales.Data
             }
             return customers;
         }
-
-
-        public async Task<Shift> GetShiftAsync(int id)
+        public async Task<List<Pos_MethodOfPayment>> GetPos_MethodOfPayment_list(string companyName)
         {
-            var shifts = await _dbContext.Pos_Shifts.Where(s => s.Id==id)
-                .Include(s => s.Orders)
-                .FirstOrDefaultAsync();
-
-            return shifts;
+            var Pos_MethodOfPayments = await _dbContext.Pos_MethodOfPayments   
+                .Where  (s => s.CompanyName == companyName || s.CompanyName == "" || s.CompanyName == null) 
+                .ToListAsync();
+            return Pos_MethodOfPayments;
         }
+         
 
     }
 

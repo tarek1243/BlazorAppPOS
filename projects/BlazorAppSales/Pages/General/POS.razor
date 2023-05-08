@@ -11,19 +11,38 @@
 
 
 
-
-
-
-
-
-
-
-
-
 <h1>Point of Sale</h1>
-@*@if (currentUserEmail!=null){
-    <h2>@currentUserEmail</h2>
+<BlazorAppSales.Pages.Components.PaymentButtonsComponent pos_OrderPayments=pos_OrderPayments
+                                                         order_total="orderLines.Sum(x => x.Total)"
+                                                         pos_MethodOfPayments="pos_MethodOfPayments">
+
+</BlazorAppSales.Pages.Components.PaymentButtonsComponent>
+
+@*
+@if (!is_paying)
+{
+    @foreach (var p in pos_MethodOfPayments)
+    {
+        <button class="btn btn-outline-dark" @onclick="(() => pay1(p))">@p.Name</button>
+    }
+}
+else
+{
+    if (current_Pos_MethodOfPayment != null)
+    {
+        <input class="form-control" @bind-value="amount_to_pay" />
+        <button class="btn btn-outline-dark" @onclick="pay2">@current_Pos_MethodOfPayment.Name</button>
+    }
+}
+@if (unPaid_remaining_Total_With_VAT != 0)
+{ 
+    <span class="badge bg-danger ">@unPaid_remaining_Total_With_VAT</span>
 }*@
+
+
+
+
+
 @if (!ShiftIsOpen)
 {
     <button class="btn btn-primary" @onclick="OpenShift">Open Shift</button>
@@ -129,7 +148,7 @@ else
 
                             @*   temppppp     *@
                             <div class="form-group">
-                                <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1))" disabled="@(!orderLines.Any() || ShiftClosed)">Place Order</button>
+                                <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1, GetOrders()))" disabled="@(!orderLines.Any() || ShiftClosed)">Place Order</button>
                             </div>
 
 
@@ -186,6 +205,8 @@ else
 {
     <OrderPage orderIdx='@CurrentOrder.Id.ToString()' @ref="orderPage1"></OrderPage>
 }*@
+
+
 
 
 @code {
