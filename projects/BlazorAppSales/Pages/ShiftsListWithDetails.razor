@@ -89,8 +89,6 @@
     </NotAuthorized>
 </AuthorizeView>
 
-
-
 @code {
 
     // @inject AuthenticationStateProvider authenticationStateProvider
@@ -103,7 +101,6 @@
     protected override async Task OnInitializedAsync()
     {
         string currentUserEmail = await Util.ClassCurrentSessionUtil.GetUserEmail(authenticationStateProvider);
-
         if (currentUserEmail != "")
         {
             currentUser = db_identity.Users.Where(u => u.Email == currentUserEmail).First();

@@ -28,7 +28,13 @@
                         @*<td>@order.Employee.Name</td>*@
                     </tr>
                     <tr>
-                        <th>Payment Method:</th>
+                        <th>Payment:</th>
+                            @foreach (var pay in @order.Pos_OrderPayments)
+                        {
+                            <label class="badge bg-dark">@pay.Amount - @pay.pos_MethodOfPayment.Name</label>
+                        }
+                       
+                         
                         @*<td>@order.PaymentMethod</td>*@
                     </tr>
                 </tbody>

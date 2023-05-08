@@ -33,7 +33,7 @@ namespace BlazorAppSales.Data
             var shifts = await _dbContext.Pos_Shifts
                 .Where  (s => s.CompanyName == companyName).OrderByDescending (s=> s.OpenedAt) 
                 .Include(s => s.Orders)
-                .ThenInclude(s => s.OrderLines).ThenInclude(i => i.Product)
+                .ThenInclude(s => s.OrderLines).ThenInclude(i => i.Product).Include(x=> x.Orders).ThenInclude(x=> x.Pos_OrderPayments) .ThenInclude(x => x.pos_MethodOfPayment)
                 .ToListAsync();
 
             foreach (var shift in shifts)

@@ -243,6 +243,9 @@ namespace BlazorAppSales.Pages.General
             order.company_name = currentCompanyName;
             order.OrderDate = DateTime.UtcNow;
 
+
+            //order.em
+
             order.Total = order.OrderLines.Sum(o => (o.Quantity * o.Product.Price));
 
             Shift currentShift = await DbContext.Pos_Shifts.FirstOrDefaultAsync(s => s.IsOpen);

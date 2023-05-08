@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
+using ClassLibraryModels;
 
 namespace BlazorAppSales.Data
 {
@@ -58,7 +59,14 @@ namespace BlazorAppSales.Data
         public List<OrderLine> OrderLines { get; set; }
         public List<Pos_OrderPayment>  Pos_OrderPayments { get; set; }
         public bool IsPaid { get; set; } = false;
-        public DateTime? PaidAt { get; set; } 
+        public DateTime? PaidAt { get; set; }
+
+
+
+
+        public WebApp1User user { get; set; }
+        public string EmployeeNumber { get; set; } = "";
+        public string EmployeeName { get; set; } = "";
 
     }
 
