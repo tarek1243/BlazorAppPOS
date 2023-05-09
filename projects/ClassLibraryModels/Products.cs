@@ -28,7 +28,7 @@ namespace BlazorAppSales.Data
     public class RelatedProduct
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string notes { get; set; } = "";
         [ForeignKey("Product")]
         public int ProductId { get; set; }
         public Product Product { get; set; }

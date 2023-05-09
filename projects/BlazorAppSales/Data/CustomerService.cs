@@ -32,7 +32,7 @@ namespace BlazorAppSales.Data
             var customers = await _dbContext.Pos_Customers
                 .Where(s => s.CompanyName == companyName).OrderByDescending(s => s.created_Date)
                 .Include(s => s.Orders)
-                .ThenInclude(s => s.OrderLines).ThenInclude(i => i.Product)
+                .ThenInclude(s => s.OrderLines).ThenInclude(i => i.Product).Include(x => x.Orders).ThenInclude(o=> o.Pos_OrderPayments).ThenInclude(p=> p.pos_MethodOfPayment)
                 .ToListAsync();
 
             foreach (var shift in customers)

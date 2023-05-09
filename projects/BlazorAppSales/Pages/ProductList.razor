@@ -4,7 +4,7 @@
 
 <h1>Products</h1>
 <datalist id="texts">
- 
+
     @foreach (var item in productTags)
     {
         <option value="@item" />
@@ -30,10 +30,10 @@ else
             {
                 <tr>
                     <td>
-                        <input class="form-control" @bind-value="@product.Name"   />
+                        <input class="form-control" @bind-value="@product.Name" />
                     </td>
                     <td>
-                        <input class="form-control" type="number" @bind-value="@product.Price"   />
+                        <input class="form-control" type="number" @bind-value="@product.Price" />
                     </td>
                     <td>
                         @*<input class="form-control" value="@product.Tags" @onchange="() => UpdateProductTags(product)" />*@
@@ -42,7 +42,56 @@ else
                     </td>
                     <td>
                         <button class="btn btn-primary" @onclick="() => EditProduct(product)">Save</button>
+                        <button class="btn btn-primary" @onclick="() => AddSupplementary(product)">Add Supplementary</button>
                     </td>
+                </tr>
+                <tr>
+                    <td colspan="5">
+                        <div class="fancy-div">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>related #</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @if (product.RelatedProducts != null)
+                                        @foreach (var prod in product.RelatedProducts)
+                                        {
+                                            <tr style=" padding: 0; margin: 0; height:100%;background-color: #C0C0C0;">
+                                                <td colspan="1">
+                                                    <select class="form-control" style="width:311px;" @bind="@selected_product.Name">
+                                                        @if (products != null)
+                                                            @foreach (var reason in products)
+                                                            {
+                                                                <option value="@reason.Name">@reason.Name</option>
+                                                            }
+                                                    </select>
+                                                </td>
+                                                <td colspan="1">@prod.Qty</td>
+                                            </tr>
+
+
+                                            @*K@if (prod.ShowLines)
+                            {
+                            <tr>
+                            @if (latestShift != @order.shift_Id)
+                            {
+                            <td class="centered" style=" padding: 0; margin: 0; height:100%;    background-color: #4CAF50;" rowspan='@Orders.Where(o => o.shift_Id==@order.shift_Id).Count()'>
+                            <div style="width: 100%; height: 100%;">
+                            @order.shift_Id
+                            </div>
+                            </td>
+                            }
+                            </tr>
+                            }*@
+                                        }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+
                 </tr>
             }
         </tbody>
@@ -52,6 +101,10 @@ else
 
 
 @code {
+
+    Product selected_product = new  Product();
+   // List<Product> transactionLine_ReturnReasons = new DbContext1().transactionLine_ReturnReasons.AsNoTracking().ToList();// new List<TransactionLine_ReturnReason>();
+
 
     private List<Product> products;
     private ProductService productService;
@@ -86,21 +139,32 @@ else
 
     private void UpdateProductName(Product product)
     {
-       // product.Name = eventArgs.Value.ToString();
+        // product.Name = eventArgs.Value.ToString();
     }
 
     private void UpdateProductPrice(Product product)
     {
-      //  product.Price = Convert.ToDecimal(eventArgs.Value);
+        //  product.Price = Convert.ToDecimal(eventArgs.Value);
     }
 
     private void UpdateProductTags(Product product)
     {
-       // product.Tags = eventArgs.Value.ToString();
+        // product.Tags = eventArgs.Value.ToString();
     }
 
     private async Task EditProduct(Product product)
     {
         await productService.UpdateProduct(product);
     }
+
+    private async Task AddSupplementary(Product product)
+    {
+        if (product.RelatedProducts == null) product.RelatedProducts = new List<RelatedProduct>();
+        RelatedProduct rel_product = new RelatedProduct();
+        rel_product.Qty = 1;
+        product.RelatedProducts.Add(rel_product);
+    }
+
+
+
 }

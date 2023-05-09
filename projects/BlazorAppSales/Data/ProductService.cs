@@ -12,7 +12,10 @@ namespace MyApp.Services
         {
             // Your code to retrieve products from the database goes here
             // For example:
-            products = await dbContext.Pos_Products.Include(p => p.ProductTags).ToListAsync();
+            products = await dbContext.Pos_Products
+                .Include(p => p.ProductTags)
+                .Include(p => p.RelatedProducts)
+                .ToListAsync();
             return products;
         }
 

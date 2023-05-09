@@ -25,6 +25,7 @@ namespace BlazorAppSales.Data
         }
         public virtual DbSet<Company> Pos_Companies { get; set; }
         public virtual DbSet<Product> Pos_Products { get; set; }
+        public virtual DbSet<RelatedProduct> Pos_RelatedProducts { get; set; }
         public DbSet<ProductTag> Pos_ProductTags { get; set; }
         public virtual DbSet<Order> Pos_Orders { get; set; }
         public virtual DbSet<OrderLine> Pos_OrderLines { get; set; }
@@ -36,7 +37,6 @@ namespace BlazorAppSales.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // Configure relationships and constraints
-            // ...
 
             // Seed data for the company invoice numbers
             modelBuilder.Entity<CompanyInvoiceNumber>()

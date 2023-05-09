@@ -4,6 +4,7 @@ using BlazorAppSales.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 {
     [DbContext(typeof(DbContextMainData))]
-    partial class DbContextMainDataModelSnapshot : ModelSnapshot
+    [Migration("20230509185223_mainmig65")]
+    partial class mainmig65
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -340,6 +343,10 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18,2)");
 
@@ -348,10 +355,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.Property<int>("Qty")
                         .HasColumnType("int");
-
-                    b.Property<string>("notes")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 

@@ -143,7 +143,8 @@ else
 
                             <BlazorAppSales.Pages.Components.PaymentButtonsComponent pos_OrderPayments=pos_OrderPayments
                                                                                  order_total="orderLines.Sum(x => x.Total)"
-                                                                                 pos_MethodOfPayments="pos_MethodOfPayments">
+                                                                                 pos_MethodOfPayments="pos_MethodOfPayments"
+                                                                                 @ref=PaymentButtonsComponent1>
                             </BlazorAppSales.Pages.Components.PaymentButtonsComponent>
                             @*   temppppp     *@
                             <div class="form-group">

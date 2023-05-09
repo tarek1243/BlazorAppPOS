@@ -1,5 +1,6 @@
 ﻿
 using BlazorAppSales.Data;
+using BlazorAppSales.Pages.Components;
 using ClassLibraryModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
@@ -10,7 +11,7 @@ namespace BlazorAppSales.Pages.General
 {
     public partial class POS : ComponentBase
     {
-
+        PaymentButtonsComponent PaymentButtonsComponent1;
 
 
         private bool ShiftIsOpen { get { return !ShiftClosed; } set { ShiftClosed = !value; } } //= false;
@@ -107,6 +108,9 @@ namespace BlazorAppSales.Pages.General
             cartItem.Total = cartItem.Price * cartItem.Quantity;
 
             Total += product.Price;
+
+            PaymentButtonsComponent1.order_total=Total;
+            PaymentButtonsComponent1.calc();
         }
         private void Search()
         {
@@ -128,7 +132,12 @@ namespace BlazorAppSales.Pages.General
         private async Task OpenShift()
         {
             // Check if there is an open shift already
-            var openShift = await db.Pos_Shifts.FirstOrDefaultAsync(s => s.IsOpen);
+            var openShift = await db.Pos_Shifts.FirstOrDefaultAsync(s => s.IsOpen 
+            &&              s.EmployeeNumber==currentUser.EmployeeNumber
+            &&              s.CompanyName==currentUser.CompanyName
+
+
+            );
 
             if (openShift != null)
             {

@@ -60,6 +60,8 @@ namespace BlazorAppSales.Data
                 .Include(o => o.Customer)
                 .Include(o => o.OrderLines)
                 .ThenInclude(oi => oi.Product)
+
+                .Include(oi => oi.Pos_OrderPayments).ThenInclude(p => p.pos_MethodOfPayment)
                 .Include(o => o.shift).OrderByDescending(o => o.Id)
                .ToListAsync();
         }
