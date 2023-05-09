@@ -1,7 +1,7 @@
 ﻿@using BlazorAppSales.Data;
-<h3>PaymentButtonsComponent</h3>
 
-
+@if (order_total != 0)
+{ 
 
 @if (!is_paying)
 {
@@ -22,7 +22,7 @@ else
 {
     <span class="badge bg-danger ">@unPaid_remaining_Total_With_VAT</span>
 }
-
+}
 
 @code {
 

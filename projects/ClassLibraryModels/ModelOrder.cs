@@ -37,13 +37,18 @@ namespace BlazorAppSales.Data
         public decimal Total_With_VAT { get; set; } = 0;
         [Column(TypeName = "decimal(18,2)")]
         public decimal Paid_Total_With_VAT { get; set; } = 0;
+
+        [Column(TypeName = "decimal(18,2)")]
+
         public decimal unPaid_remaining_Total_With_VAT { get; set; } = 0;
 
 
         [Column(TypeName = "decimal(18,2)")]
         public decimal VAT_Amount { get; set; } = 0;
+        [ForeignKey("Customer")]
+
         public int CustomerId { get; set; }
-        public Customer Customer { get; set; }
+        public Customer? Customer { get; set; }
         public string customer_name { get; set; } = "";
         public Shift shift { get; set; }
         [ForeignKey("shift")]
@@ -63,8 +68,10 @@ namespace BlazorAppSales.Data
 
 
 
+        [ForeignKey("user")]
+        public string? userId { get; set; }
+        public WebApp1User? user { get; set; }
 
-        public WebApp1User user { get; set; }
         public string EmployeeNumber { get; set; } = "";
         public string EmployeeName { get; set; } = "";
 
@@ -105,4 +112,25 @@ namespace BlazorAppSales.Data
         public Pos_MethodOfPayment pos_MethodOfPayment { get; set; }
 
     }
+
+
+
+
+
+    public class ProductVariantType
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public List<ProductVariantValue> Values { get; set; }
+    }
+
+    public class ProductVariantValue
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public decimal Price { get; set; }
+        public int VariantTypeId { get; set; }
+        public ProductVariantType VariantType { get; set; }
+    }
+
 }

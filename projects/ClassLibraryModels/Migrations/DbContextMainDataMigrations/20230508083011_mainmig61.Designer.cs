@@ -4,6 +4,7 @@ using BlazorAppSales.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 {
     [DbContext(typeof(DbContextMainData))]
-    partial class DbContextMainDataModelSnapshot : ModelSnapshot
+    [Migration("20230508083011_mainmig61")]
+    partial class mainmig61
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -179,6 +182,7 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("userId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
@@ -492,7 +496,7 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AspNetUsers");
+                    b.ToTable("WebApp1User");
                 });
 
             modelBuilder.Entity("ProductProductTag", b =>
@@ -532,7 +536,9 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.HasOne("ClassLibraryModels.WebApp1User", "user")
                         .WithMany()
-                        .HasForeignKey("userId");
+                        .HasForeignKey("userId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Customer");
 

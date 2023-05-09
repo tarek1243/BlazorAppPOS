@@ -12,11 +12,7 @@
 
 
 <h1>Point of Sale</h1>
-<BlazorAppSales.Pages.Components.PaymentButtonsComponent pos_OrderPayments=pos_OrderPayments
-                                                         order_total="orderLines.Sum(x => x.Total)"
-                                                         pos_MethodOfPayments="pos_MethodOfPayments">
 
-</BlazorAppSales.Pages.Components.PaymentButtonsComponent>
 
 @*
 @if (!is_paying)
@@ -145,7 +141,10 @@ else
                                 </tbody>
                             </table>
 
-
+                            <BlazorAppSales.Pages.Components.PaymentButtonsComponent pos_OrderPayments=pos_OrderPayments
+                                                                                 order_total="orderLines.Sum(x => x.Total)"
+                                                                                 pos_MethodOfPayments="pos_MethodOfPayments">
+                            </BlazorAppSales.Pages.Components.PaymentButtonsComponent>
                             @*   temppppp     *@
                             <div class="form-group">
                                 <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1, GetOrders()))" disabled="@(!orderLines.Any() || ShiftClosed)">Place Order</button>
@@ -194,7 +193,7 @@ else
                 <option value="@customer">@customer.Name</option>
                 }
                 </select>*@
-                    <CustomerSelector Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
+                    <CustomerSelector  current_companyName="@currentUser.CompanyName" Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
                 </div>
             </div>
         </div>

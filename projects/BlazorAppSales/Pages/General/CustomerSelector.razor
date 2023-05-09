@@ -138,6 +138,11 @@
     [Parameter]
     public List<Customer> Customers_full { get; set; }
     public List<Customer> Customers_filtered { get; set; }
+
+
+
+    [Parameter]
+    public string current_companyName { get; set; }
     // public Customer SelectedCustomer { get { } set { } }
 
     public Customer _SelectedCustomer { get; set; }
@@ -148,7 +153,9 @@
     private void save()
     {
         DbContextMainData DbContextMainData = new DbContextMainData();
-        DbContextMainData.Pos_Customers.Attach(newCustomer);
+        newCustomer.CompanyName = current_companyName;
+        DbContextMainData.Pos_Customers.Add(newCustomer);
+        //DbContextMainData.Pos_Customers.Attach(newCustomer);
         DbContextMainData.SaveChanges();
         endCreateNewCustomer();
         OnNewCustomerCreated.InvokeAsync(newCustomer);

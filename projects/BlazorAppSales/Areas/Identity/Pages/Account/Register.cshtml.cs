@@ -98,9 +98,9 @@ namespace BlazorAppSales.Areas.Identity.Pages.Account
             [Display(Name = "Confirm password")]
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
-            public string CompanyName { get; set; }
-            public string Mobile { get; set; }
-            public string VAT_number { get; set; }
+            public string CompanyName { get; set; } = "";
+            public string Mobile { get; set; } = "";
+            public string? VAT_number { get; set; } = "";
             public string branch { get; set; } = "";
             public string EmployeeNumber { get; set; } = "";
             public string EmployeeName { get; set; } = "";

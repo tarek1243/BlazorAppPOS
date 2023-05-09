@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ClassLibraryModels
 {
+    [Table("AspNetUsers")]
     public class WebApp1User : IdentityUser
     {
 

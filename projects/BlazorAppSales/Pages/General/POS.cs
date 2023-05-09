@@ -10,8 +10,8 @@ namespace BlazorAppSales.Pages.General
 {
     public partial class POS : ComponentBase
     {
-     
-      
+
+
 
         private bool ShiftIsOpen { get { return !ShiftClosed; } set { ShiftClosed = !value; } } //= false;
 
@@ -244,7 +244,9 @@ namespace BlazorAppSales.Pages.General
             order.OrderDate = DateTime.UtcNow;
 
 
-            //order.em
+            order.userId = currentUser.Id;
+            order.EmployeeName = currentUser.Name;
+            order.EmployeeNumber = currentUser.EmployeeNumber;
 
             order.Total = order.OrderLines.Sum(o => (o.Quantity * o.Product.Price));
 
@@ -256,7 +258,9 @@ namespace BlazorAppSales.Pages.General
             int loyaltyPointsEarned = _loyaltyProgramService.CalculateLoyaltyPointsEarned(order.Total);
             order.LoyaltyPointsEarned = loyaltyPointsEarned;
             selectedCustomer.LoyaltyPoints += order.LoyaltyPointsEarned;
-            DbContext.Pos_Customers.Attach(selectedCustomer);
+
+            ///saveing LoyaltyPoints
+            DbContext.Pos_Customers.Where(_ => _.Id == selectedCustomer.Id).FirstOrDefault().LoyaltyPoints = selectedCustomer.LoyaltyPoints; 
 
 
             DbContext.Pos_Orders.Add(order);
