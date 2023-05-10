@@ -4,7 +4,6 @@ using BlazorAppSales.Pages.Components;
 using ClassLibraryModels;
 using Microsoft.AspNetCore.Components;
 using Microsoft.EntityFrameworkCore;
-using MyApp.Services;
 
 
 namespace BlazorAppSales.Pages.General

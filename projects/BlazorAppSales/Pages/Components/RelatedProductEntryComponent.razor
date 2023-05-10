@@ -1,0 +1,40 @@
+﻿@using BlazorAppSales.Data;
+
+<tr style=" padding: 0; margin: 0; height:100%;background-color: #C0C0C0;">
+    <td colspan="1">
+        @*@current_related_product.Related_Product*@
+        <input type="text" class="form-control" @bind-value=current_related_product.Related_ProductId />
+        <select class="form-control" style="width:311px;" @bind="@current_related_product.Related_ProductId">
+            @if (products != null)
+                @foreach (var prod in products)
+                {
+                    <option value="@prod.Id">@prod.Name</option>
+                }
+        </select>
+
+
+
+    </td>
+    <td colspan="1">
+        <input type="text" class="form-control" @bind-value=current_related_product.Qty />
+    </td>
+
+    <td colspan="1">
+        <input type="text" class="form-control" @bind-value=current_related_product.Price />
+    </td><td colspan="1">
+        <input type="text" class="form-control" @bind-value=current_related_product.RelatedTotal disabled />
+    </td>
+</tr>
+@code {
+    [Parameter]
+    public List<Product> products { get; set; }
+
+    //[Parameter]
+    //public Product selected_product { get; set; }
+    [Parameter]
+    public RelatedProduct current_related_product { get; set; }
+    [Parameter]
+    public Product parentProduct { get; set; }
+
+
+}

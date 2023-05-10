@@ -56,6 +56,9 @@ namespace BlazorAppSales.Data
 
 
 
+           // modelBuilder.Entity<Product>().HasMany(prod => prod.RelatedProducts).WithOne(p => p.Parent_Product).OnDelete(DeleteBehavior.NoAction)
+             //   ;
+
 
             /*            modelBuilder.Entity<Product>()
                         .HasMany(e => e.RelatedProducts)

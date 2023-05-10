@@ -1,6 +1,5 @@
 ﻿@page "/products"
 @using BlazorAppSales.Data;
-@using MyApp.Services
 
 <h1>Products</h1>
 <datalist id="texts">
@@ -30,6 +29,7 @@ else
             {
                 <tr>
                     <td>
+                        <input class="form-control" @bind-value="@product.Id" size="5" disabled />
                         <input class="form-control" @bind-value="@product.Name" />
                     </td>
                     <td>
@@ -52,27 +52,21 @@ else
                                 <thead>
                                     <tr>
                                         <th>related #</th>
-                                        <th></th>
+                                        <th>qty</th>
+                                        <th>price</th>
+                                        <th>total</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if (product.RelatedProducts != null)
-                                        @foreach (var prod in product.RelatedProducts)
+                                        @foreach (var related_prod in product.RelatedProducts)
                                         {
-                                            <tr style=" padding: 0; margin: 0; height:100%;background-color: #C0C0C0;">
-                                                <td colspan="1">
-                                                    <select class="form-control" style="width:311px;" @bind="@selected_product.Name">
-                                                        @if (products != null)
-                                                            @foreach (var reason in products)
-                                                            {
-                                                                <option value="@reason.Name">@reason.Name</option>
-                                                            }
-                                                    </select>
-                                                </td>
-                                                <td colspan="1">@prod.Qty</td>
-                                            </tr>
+                                            <BlazorAppSales.Pages.Components.RelatedProductEntryComponent current_related_product=related_prod
+                                                                                          products=products_noTracking>
 
+                                            </BlazorAppSales.Pages.Components.RelatedProductEntryComponent>
 
+                                      
                                             @*K@if (prod.ShowLines)
                             {
                             <tr>
@@ -107,6 +101,7 @@ else
 
 
     private List<Product> products;
+    private List<Product> products_noTracking;
     private ProductService productService;
     List<string> productTags = new List<string>();
 
@@ -114,6 +109,7 @@ else
     {
         productService = new ProductService();
         products = await productService.GetProductsAsync();
+        products_noTracking = await productService.GetProductsAsNoTrackingAsync();
         productTags = await productService.GetProductsTagsAsync();
     }
 
@@ -161,8 +157,13 @@ else
     {
         if (product.RelatedProducts == null) product.RelatedProducts = new List<RelatedProduct>();
         RelatedProduct rel_product = new RelatedProduct();
+        rel_product.Parent_ProductId = product.Id ;
+        rel_product.Related_ProductId =  3 ;//product.ProductId;//must be changed
         rel_product.Qty = 1;
         product.RelatedProducts.Add(rel_product);
+       // await productService.UpdateProduct(product);
+
+
     }
 
 

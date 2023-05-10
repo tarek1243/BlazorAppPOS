@@ -4,6 +4,7 @@ using BlazorAppSales.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 {
     [DbContext(typeof(DbContextMainData))]
-    partial class DbContextMainDataModelSnapshot : ModelSnapshot
+    [Migration("20230510045554_mainmig67")]
+    partial class mainmig67
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,9 +352,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
                     b.Property<int>("Qty")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("RelatedTotal")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<int>("Related_ProductId")
                         .HasColumnType("int");
 
@@ -599,13 +599,13 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
             modelBuilder.Entity("BlazorAppSales.Data.RelatedProduct", b =>
                 {
                     b.HasOne("BlazorAppSales.Data.Product", "Parent_Product")
-                        .WithMany("RelatedProducts")
+                        .WithMany()
                         .HasForeignKey("Parent_ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("BlazorAppSales.Data.Product", "Related_Product")
-                        .WithMany()
+                        .WithMany("RelatedProducts")
                         .HasForeignKey("Related_ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
