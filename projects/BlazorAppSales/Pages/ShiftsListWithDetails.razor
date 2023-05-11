@@ -8,7 +8,6 @@
 <AuthorizeView>
     <Authorized>
         <h1>Shifts</h1>
-
         @if (shifts != null)
         {
             <table class="table">
@@ -30,7 +29,8 @@
                     {
                         <tr>
                             <td>
-                                <button class="btn btn-primary" @onclick="() =>  shift.ShowLines=!shift.ShowLines ">
+                                <button class="btn btn-primary" @onclick="(() =>  expand_shift_close_others(shift)) ">
+                                    @*<button class="btn btn-primary" @onclick="() =>  shift.ShowLines=!shift.ShowLines ">*@
                                     @if (shift.ShowLines)
                                     {
                                         <span>-</span>
@@ -49,21 +49,17 @@
                             <td>@shift.ClosedAt</td>
                             <td>@shift.Orders.Count()</td>
                             <td>@shift.Orders.Sum(o => o.Total)</td>
-
                         </tr>
 
                         @if (shift.ShowLines)
-                        {
                             @if (shift.Orders.Count > 0)
                             {
                                 <tr>
                                     <td colspan="6">
                                         <BlazorAppSales.Pages.Components.ListOfOrdersComponent orders=shift.Orders></BlazorAppSales.Pages.Components.ListOfOrdersComponent>
-                                         
                                     </td>
                                 </tr>
                             }
-                        }
                     }
                 </tbody>
             </table>
@@ -87,8 +83,14 @@
 
 @code {
 
-    // @inject AuthenticationStateProvider authenticationStateProvider
-    //Util.ClassCurrentSessionUtil.GetUserEmail
+
+    void expand_shift_close_others(Shift shift)
+    {
+        bool temp = shift.ShowLines;
+        shifts.ForEach(s => s.ShowLines = false);
+        shift.ShowLines = !temp;
+    }
+
     OrderService os = new OrderService();
 
     private List<Shift> shifts;

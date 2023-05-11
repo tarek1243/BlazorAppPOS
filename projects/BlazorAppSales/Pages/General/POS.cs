@@ -12,7 +12,6 @@ namespace BlazorAppSales.Pages.General
     {
         PaymentButtonsComponent PaymentButtonsComponent1;
 
-
         private bool ShiftIsOpen { get { return !ShiftClosed; } set { ShiftClosed = !value; } } //= false;
 
         private string searchQuery_item = string.Empty;
@@ -23,7 +22,6 @@ namespace BlazorAppSales.Pages.General
         private List<Order>? Orders { get; set; }
         private List<OrderLine>? orderLines { get; set; }
         private List<Customer>? customers { get; set; } = new List<Customer>();
-
         private List<Pos_MethodOfPayment>? pos_MethodOfPayments { get; set; } = new List<Pos_MethodOfPayment>();
         private List<Pos_OrderPayment>? pos_OrderPayments { get; set; } = new List<Pos_OrderPayment>();
 
@@ -49,6 +47,12 @@ namespace BlazorAppSales.Pages.General
             selectedCustomer = customer;
         }
 
+
+        void calc_total() {
+            Total=orderLines.Sum(x => x.Total);
+            PaymentButtonsComponent1.order_total = Total;
+            PaymentButtonsComponent1.calc();
+        }
         /// <summary>
         /// temppppp
         /// </summary>
@@ -69,8 +73,8 @@ namespace BlazorAppSales.Pages.General
         {
 
 
-            ProductsAll = DbContext.Pos_Products.ToList();
-            Products = DbContext.Pos_Products.Include(p => p.ProductTags).ToList();
+            ProductsAll = DbContext.Pos_Products.Include(p => p.RelatedProducts).ToList();
+            Products = DbContext.Pos_Products.Include(p => p.RelatedProducts).Include(p => p.ProductTags).ToList();
             Orders = DbContext.Pos_Orders.ToList();
             customers = DbContext.Pos_Customers.ToList();
             orderLines = new List<OrderLine>();
@@ -106,10 +110,9 @@ namespace BlazorAppSales.Pages.General
 
             cartItem.Total = cartItem.Price * cartItem.Quantity;
 
-            Total += product.Price;
+            //Total += product.Price;
+            calc_total();
 
-            PaymentButtonsComponent1.order_total=Total;
-            PaymentButtonsComponent1.calc();
         }
         private void Search()
         {

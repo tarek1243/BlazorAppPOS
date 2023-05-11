@@ -15,7 +15,7 @@ tr:focus-within {
     height: 50vh; /* Sets height to half of the viewport height */
     background-color: #f2f2f2;
     border: 1px solid #ccc;
-    padding: 20px;
+    padding: 15px;
     overflow-y: scroll; /* Makes the div scrollable vertically */
 }
 
@@ -150,24 +150,10 @@ div {
 
 
 @import url('open-iconic/font/css/open-iconic-bootstrap.min.css');
+ 
 
-/*
-https://stackoverflow.com/questions/468881/print-div-id-printarea-div-only*/
-@media print {
-    body * {
-        visibility: hidden;
-    }
 
-    #section-to-print, #section-to-print * {
-        visibility: visible;
-    }
 
-    #section-to-print {
-        position: absolute;
-        left: 0;
-        top: 0;
-    }
-}
 
 
 

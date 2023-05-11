@@ -14,70 +14,82 @@ https://localhost:7092/order-receipt/1058
 @using System.Drawing;
 
 
+@inject AuthenticationStateProvider authenticationStateProvider
 @inject OrderService orderService
 @inject IJSRuntime Js
 
 @if (order != null)
     @if (order.Total != 0)
     {
-        <button class="print-button" @onclick="PrintOrderSummary">Print</button>
+
+        @*id = "div-to-print"*@
+        <div id="printDiv" class="div-to-print-a4">
+
+            <div id="printDiv">
+                <div class="receipt">
+                    <div class="imageContainer">
+                        <img class="img_hoverxxxx" src="@imgSrc_ImageData1" width="285px" />
+                    </div>
+                    @*<h3>Order Receipt</h3>*@
+                    <h3>@order.company_name</h3>
+                    <div class="order-details">
+                        @*   <div><strong>Order Number:</strong> @order.Id</div>*@
+                        <div><strong></strong> @currentUser.branch</div>
+                        <div><strong></strong> @currentUser.Name</div>
 
 
-        <div id="section-to-print">
-            <div class="receipt">
-                <div class="imageContainer">
-                    <img class="img_hoverxxxx" src="@imgSrc_ImageData1" width="285px" />
+                        <div><strong>Invoice:</strong> @order.InvoiceNumber</div>
+                        <div><strong></strong> @order.OrderDate</div>
+                        @*<div><strong>Cashier:</strong> @order.Cashier</div>
+                <div><strong>Customer:</strong> @order.CustomerName</div>*@
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Qty</th>
+                                <th>Price</th>
+                                <th>Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (order != null)
+                                @if (order.OrderLines != null)
+                                    @foreach (var item in order.OrderLines)
+                                    {
+                                        <tr>
+                                            <td>@item.Product.Name</td>
+                                            <td>@item.Quantity.ToString("0")</td>
+                                            <td>@item.Price</td>
+                                            <td>@item.Total</td>
+                                        </tr>
+                                    }
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
+                                <td>@order.Total</td>
+                            </tr>
+                        </tfoot>
+                    </table>
                 </div>
-                @*<h3>Order Receipt</h3>*@
-                <h3>@order.company_name</h3>
-                <div class="order-details">
-                    @*   <div><strong>Order Number:</strong> @order.Id</div>*@
-                    <div><strong></strong> @currentUser.branch</div>
-                    <div><strong></strong> @currentUser.Name</div>
-
-
-                    <div><strong>Invoice:</strong> @order.InvoiceNumber</div>
-                    <div><strong></strong> @order.OrderDate</div>
-                    @*<div><strong>Cashier:</strong> @order.Cashier</div>
-            <div><strong>Customer:</strong> @order.CustomerName</div>*@
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th>Amount</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @if (order != null)
-                            @if (order.OrderLines != null)
-                                @foreach (var item in order.OrderLines)
-                                {
-                                    <tr>
-                                        <td>@item.Product.Name</td>
-                                        <td>@item.Quantity.ToString("0")</td>
-                                        <td>@item.Price</td>
-                                        <td>@item.Total</td>
-                                    </tr>
-                                }
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="3" style="text-align: right;"><strong>Total:</strong></td>
-                            <td>@order.Total</td>
-                        </tr>
-                    </tfoot>
-                </table>
+                @TableHeader
             </div>
-            @TableHeader
+
+
         </div>
+
+<button class="print-button" @onclick="PrintDiv">Print</button>
+@*<button class="print-button" @onclick="PrintOrderSummary">Print</button>*@
     }
-@inject AuthenticationStateProvider authenticationStateProvider
 
+
+ 
 @code {
-
+    private async Task PrintDiv()
+    {
+        await Js.InvokeVoidAsync("printDiv", "printDiv");
+    }
     string imgSrc_ImageData1 = "";
 
     [Parameter]
@@ -105,7 +117,7 @@ https://localhost:7092/order-receipt/1058
             TableHeader = GenerateReceipt(order);
         }
     }
- 
+
 
     private string GenerateQrCode(string data)
     {
@@ -147,7 +159,7 @@ https://localhost:7092/order-receipt/1058
             builder.OpenElement(5, "img");
 
             var saudiConvertion = new SaudiConvertion();
-           // string encrypted_str = saudiConvertion.getBase64("sellerName",  "310122393500003", order.OrderDate.ToString(), order.Total.ToString(), order.VAT_Amount.ToString());
+            // string encrypted_str = saudiConvertion.getBase64("sellerName",  "310122393500003", order.OrderDate.ToString(), order.Total.ToString(), order.VAT_Amount.ToString());
             string encrypted_str = saudiConvertion.getBase64(currentUser.CompanyName, currentUser.VAT_number, order.OrderDate.ToString(), order.Total.ToString(), order.VAT_Amount.ToString());
 
             builder.AddAttribute(6, "src", GenerateQrCode(encrypted_str));

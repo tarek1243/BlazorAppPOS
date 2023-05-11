@@ -1,0 +1,59 @@
+﻿@using BlazorAppSales.Data;
+ 
+<tr>
+    <td>@ol.Product.Name</td>
+    <td>@ol.Product.Price.ToString("C")</td>
+    <td>
+        <input type="text" size="5" @bind-value=qty>
+    </td>
+    <td>@((ol.Quantity * ol.Product.Price).ToString("C"))</td>
+
+
+    <td>
+        <button class="btn btn-danger btn-sm" @onclick="() => DeleteOrderLine(ol)">
+            <i class="bi bi-trash">X</i>
+        </button>
+
+        @if (!ol.IsSupplementary)
+            @if (ol.Product.RelatedProducts.Count() > 0)
+            {
+                <button class="btn btn-light btn-sm" @onclick="() => CreateSupplementary(ol)">
+                    <i class="bi bi-trash">...</i>
+                </button>
+            }
+
+    </td>
+</tr>
+@code {
+    [Parameter]
+    public OrderLine ol { get; set; }
+
+
+    public decimal qty { get { return ol.Quantity; } set { ol.Quantity = value; 
+            ol.Total = ol.Price * ol.Quantity;
+        recalc(); } }
+
+    [Parameter] public EventCallback<OrderLine> OnDeleteOrderLine { get; set; }
+    private void DeleteOrderLine(OrderLine ol)
+    {
+        OnDeleteOrderLine.InvokeAsync(ol);
+    }
+
+
+    [Parameter] public EventCallback<OrderLine> OnCreateSupplementary { get; set; }
+    private void CreateSupplementary(OrderLine ol)
+    {
+        OnCreateSupplementary.InvokeAsync(ol);
+    }
+
+
+
+    [Parameter] public EventCallback OnNeedRecalc { get; set; }
+    private void recalc()
+    {
+
+        OnNeedRecalc.InvokeAsync();
+    }
+
+
+}

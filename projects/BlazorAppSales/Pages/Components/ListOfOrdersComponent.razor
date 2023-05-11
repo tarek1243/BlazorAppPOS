@@ -23,6 +23,7 @@
                         @if (@order.OrderLines != null)
                             @order.OrderLines.Count()
 
+
                         </td>
 
                         <td>
@@ -44,8 +45,7 @@
             @*         <div class="card-header">
         </div>*@
             <div class="card-body ">
-                <h3>Order Details</h3>
-
+                <h4>Order Details</h4>
                 <OrderSummary order="@SelectedOrder" />
             </div>
         </div>
@@ -59,7 +59,8 @@
     // @inject AuthenticationStateProvider authenticationStateProvider
     //Util.ClassCurrentSessionUtil.GetUserEmail
     OrderService os = new OrderService();
-        private void Delete(Order order)
+
+    private void Delete(Order order)
     {
         os.DeleteOrderAsync(order.Id);
         orders = orders.Where(o => o.Id != order.Id).ToList();

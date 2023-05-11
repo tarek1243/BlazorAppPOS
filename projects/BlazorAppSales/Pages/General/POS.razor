@@ -31,13 +31,9 @@ else
     }
 }
 @if (unPaid_remaining_Total_With_VAT != 0)
-{ 
+{
     <span class="badge bg-danger ">@unPaid_remaining_Total_With_VAT</span>
 }*@
-
-
-
-
 
 @if (!ShiftIsOpen)
 {
@@ -51,19 +47,7 @@ else
 @if (ShiftIsOpen)
 {
     <div class="row" style=" border: 1px solid black; overflow: auto;">
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <!-- Summary and other information here -->
-                    @*  <OrderReceipt order="CurrentOrder" onClose="@(() => ShowReceipt = false)" />*@
-                    @if (CurrentOrder != null)
-                    {
-                        <OrderPage order="CurrentOrder" onClose="@(() => ShowReceipt = false)"
-                           @ref="orderPage1" />
-                    }
-                </div>
-            </div>
-        </div>
+        
 
         <div class="col-md-8">
             <div class="card">
@@ -85,7 +69,7 @@ else
                                     <label>
                                         <input type="radio" name="option" value="@tag_name_str"
                                        @onchange="(()=>OnChange_selectedTagFilter(tag_name_str))">
-                                        <span class="button p-1 ">    &nbsp; &nbsp; &nbsp;                 @tag_name_str</span>
+                                        <span class="button p-1 "> &nbsp; &nbsp; @tag_name_str</span>
                                     </label>
                                 }
                             </div>
@@ -121,18 +105,19 @@ else
                                         <th>Price</th>
                                         <th>Quantity</th>
                                         <th>Total</th>
+                                        <th></th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     @if (orderLines != null)
-                                        @foreach (var item in orderLines)
+                                        @foreach (var orderLine in orderLines)
                                         {
-                                            <tr>
-                                                <td>@item.Product.Name</td>
-                                                <td>@item.Product.Price.ToString("C")</td>
-                                                <td>@item.Quantity</td>
-                                                <td>@((item.Quantity * item.Product.Price).ToString("C"))</td>
-                                            </tr>
+                                            <BlazorAppSales.Pages.Components.OrderLineCartComponent ol="orderLine"
+                                                                                        OnDeleteOrderLine=DeleteOrderLine
+                                            OnNeedRecalc=calc_total
+                                            OnCreateSupplementary=CreateSupplementary
+                                            ></BlazorAppSales.Pages.Components.OrderLineCartComponent>
+                                           
                                         }
                                     <tr>
                                         <td colspan="3">Total</td>
@@ -150,9 +135,6 @@ else
                             <div class="form-group">
                                 <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1, GetOrders()))" disabled="@(!orderLines.Any() || ShiftClosed)">Place Order</button>
                             </div>
-
-
-
 
                             @if (ShiftClosed)
                             {
@@ -194,10 +176,26 @@ else
                 <option value="@customer">@customer.Name</option>
                 }
                 </select>*@
-                    <CustomerSelector  current_companyName="@currentUser.CompanyName" Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
+                    <CustomerSelector current_companyName="@currentUser.CompanyName" Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
                 </div>
             </div>
         </div>
+
+
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <!-- Summary and other information here -->
+                    @*  <OrderReceipt order="CurrentOrder" onClose="@(() => ShowReceipt = false)" />*@
+                    @if (CurrentOrder != null)
+                    {
+                        <OrderPage order="CurrentOrder" onClose="@(() => ShowReceipt = false)"
+                           @ref="orderPage1" />
+                    }
+                </div>
+            </div>
+        </div>
+
     </div>
 }
 
@@ -210,6 +208,33 @@ else
 
 
 @code {
+
+    private void CreateSupplementary(OrderLine ol)
+    {
+        if (ol.Product.RelatedProducts != null)
+            foreach (var relatedProduct in ol.Product.RelatedProducts)
+            {
+                OrderLine new_ol = new OrderLine();
+                new_ol.Product = relatedProduct.Related_Product;
+                new_ol.product_id = relatedProduct.Related_ProductId;
+                new_ol.Quantity = relatedProduct.Qty * ol.Quantity;
+                new_ol.Price = relatedProduct.Price;
+                new_ol.Total = new_ol.Quantity * new_ol.Price;
+                new_ol.IsSupplementary = true ; 
+                orderLines.Add(new_ol);
+                calc_total();
+
+            }
+
+    }
+    private void DeleteOrderLine(OrderLine ol)
+    {
+        orderLines.Remove(ol);
+        //os.DeleteOrderAsync(order.Id);
+        //orders = orders.Where(o => o.Id != order.Id).ToList();
+        calc_total();
+    }
+
 
     string selectedTagFilter = "";
     private void OnChange_selectedTagFilter(string selected)

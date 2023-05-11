@@ -38,3 +38,35 @@
     color: #333333;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+
+
+
+
+
+@media print {
+
+    .div-to-print-a4 {
+       /* left: 0;
+        top: 0;
+        margin: 0;
+        padding: 0;
+        overflow: visible;*/
+        width: 210mm; /*A4 width */
+        height: 297mm; /*  A4 height */
+    }
+}
+
+
+
+
+
+
+
+ 

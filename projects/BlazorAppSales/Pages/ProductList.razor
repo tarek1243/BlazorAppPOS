@@ -1,5 +1,7 @@
 ﻿@page "/products"
 @using BlazorAppSales.Data;
+@using ClassLibraryModels;
+@inject AuthenticationStateProvider authenticationStateProvider
 
 <h1>Products</h1>
 <datalist id="texts">
@@ -15,6 +17,8 @@
 }
 else
 {
+    <button class="btn btn-primary" @onclick="() => CreateProduct()">Add</button>
+
     <table class="table">
         <thead>
             <tr>
@@ -29,8 +33,8 @@ else
             {
                 <tr>
                     <td>
-                        <input class="form-control" @bind-value="@product.Id" size="5" disabled />
-                        <input class="form-control" @bind-value="@product.Name" />
+                        <input style="display:inline-block;" @bind-value="@product.Id" size="5" disabled />
+                        <input class="form-control w-50" placeholder="Item Name" style="display:inline-block;" @bind-value="@product.Name" />
                     </td>
                     <td>
                         <input class="form-control" type="number" @bind-value="@product.Price" />
@@ -45,6 +49,8 @@ else
                         <button class="btn btn-primary" @onclick="() => AddSupplementary(product)">Add Supplementary</button>
                     </td>
                 </tr>
+                @if (product.RelatedProducts.Count() > 0)
+                { 
                 <tr>
                     <td colspan="5">
                         <div class="fancy-div">
@@ -65,8 +71,6 @@ else
                                                                                           products=products_noTracking>
 
                                             </BlazorAppSales.Pages.Components.RelatedProductEntryComponent>
-
-                                      
                                             @*K@if (prod.ShowLines)
                             {
                             <tr>
@@ -87,6 +91,7 @@ else
                     </td>
 
                 </tr>
+                }
             }
         </tbody>
     </table>
@@ -96,9 +101,7 @@ else
 
 @code {
 
-    Product selected_product = new  Product();
-   // List<Product> transactionLine_ReturnReasons = new DbContext1().transactionLine_ReturnReasons.AsNoTracking().ToList();// new List<TransactionLine_ReturnReason>();
-
+    Product selected_product = new Product();
 
     private List<Product> products;
     private List<Product> products_noTracking;
@@ -111,6 +114,8 @@ else
         products = await productService.GetProductsAsync();
         products_noTracking = await productService.GetProductsAsNoTrackingAsync();
         productTags = await productService.GetProductsTagsAsync();
+
+        ReadCurrent();
     }
 
     private async void UpdateProductTags(Product product, string newTags)
@@ -125,9 +130,27 @@ else
         await productService.DeleteProductAsync(productId);
         products = await productService.GetProductsAsync();
     }
+    WebApp1User currentUser;
+    ApplicationDbContext applicationDbContext = new ApplicationDbContext();
+
+    // bool isAdmin = false;
+    private async Task ReadCurrent()
+    {
+        currentUser = await Util.ClassCurrentSessionUtil.GetUser(authenticationStateProvider, applicationDbContext);
+        //isAdmin = await Util.ClassCurrentSessionUtil.CheckIfUserHasRole(authenticationStateProvider, applicationDbContext, "Admin");
+    }
+
     private async void CreateProduct()
     {
-        var newProduct = new Product() { Name = "New Product", Price = 0 };
+        var newProduct = new Product()
+            {
+                Name = "",
+                Price = 0,
+                Description = "",
+                ImageUrl = ""            ,
+                CompanyName = currentUser.CompanyName            ,
+                Number = ""
+            };
         await productService.CreateProductAsync(newProduct);
         products = await productService.GetProductsAsync();
     }
@@ -157,13 +180,11 @@ else
     {
         if (product.RelatedProducts == null) product.RelatedProducts = new List<RelatedProduct>();
         RelatedProduct rel_product = new RelatedProduct();
-        rel_product.Parent_ProductId = product.Id ;
-        rel_product.Related_ProductId =  3 ;//product.ProductId;//must be changed
+        rel_product.Parent_ProductId = product.Id;
+        rel_product.Related_ProductId = 3;//product.ProductId;//must be changed
         rel_product.Qty = 1;
         product.RelatedProducts.Add(rel_product);
-       // await productService.UpdateProduct(product);
-
-
+        // await productService.UpdateProduct(product);
     }
 
 

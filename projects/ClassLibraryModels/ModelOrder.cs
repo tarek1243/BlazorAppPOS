@@ -86,11 +86,13 @@ namespace BlazorAppSales.Data
         public int product_id { get; set; }
         public Product Product { get; set; }
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Quantity { get; set; }
+        public decimal Quantity { get; set; } = 0;
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Price { get; set; }
+        public decimal Price { get; set; } = 0;
         [Column(TypeName = "decimal(18,2)")]
-        public decimal Total { get; set; }
+        public decimal Total { get; set; } = 0;
+
+        public bool IsSupplementary { get; set; } = false; 
     }
 
 

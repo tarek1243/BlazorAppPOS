@@ -21,7 +21,8 @@ namespace BlazorAppSales.Data
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         public int Stock { get; set; }
-        public int CompanyId { get; set; }
+        public int? CompanyId { get; set; }
+        public string? CompanyName { get; set; } = "";
         public Company Company { get; set; }
         public string Description { get; set; }
         public string ImageUrl { get; set; }
@@ -52,7 +53,9 @@ namespace BlazorAppSales.Data
         [ForeignKey("Related_Product")]
         public int Related_ProductId { get; set; }
         public Product Related_Product { get; set; }
-        public int Qty { get; set; } = 0;
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal Qty { get; set; } = 0;
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; } = 0;
 
