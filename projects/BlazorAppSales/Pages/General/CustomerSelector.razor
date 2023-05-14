@@ -120,7 +120,12 @@
         }
         else
         {
-            Customers_filtered = Customers_full.Where(c => c.Name.Contains(searchText)).ToList();// await CustomerService.SearchCustomersAsync(SearchText);
+            Customers_filtered = Customers_full.Where(c =>
+                c.Name.Contains(searchText)||
+                c.Phone.Contains(searchText)||
+                c.Email.Contains(searchText)
+            
+            ).ToList();// await CustomerService.SearchCustomersAsync(SearchText);
 
             if (Customers_filtered.Count > 0)
                 SelectedCustomer = Customers_filtered[0];

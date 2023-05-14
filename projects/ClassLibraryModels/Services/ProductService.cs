@@ -8,7 +8,7 @@ namespace BlazorAppSales.Data
 
     public interface IProductService
     {
-        Task<List<Product>> GetProductsAsync();
+        Task<List<Product>> GetProductsAsync(string companyName);
         Task<Product> GetProductByIdAsync(int id);
         Task<Product> CreateProductAsync(Product product);
         //   Task<Product> UpdateProductAsync(Product product);
@@ -38,13 +38,14 @@ namespace BlazorAppSales.Data
         private List<Product> products;
         private readonly DbContextMainData dbContext = new DbContextMainData();
 
-        public async Task<List<Product>> GetProductsAsync()
+        public async Task<List<Product>> GetProductsAsync(string companyName)
         {
             // Your code to retrieve products from the database goes here
             // For example:
             products = await dbContext.Pos_Products
                 .Include(p => p.ProductTags)
                 .Include(p => p.RelatedProducts)
+                .Where(p => p.CompanyName == companyName)
                 .ToListAsync();
             return products;
         }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using ClassLibraryModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorAppSales.Data
 {
@@ -32,6 +33,15 @@ namespace BlazorAppSales.Data
         public virtual DbSet<Customer> Pos_Customers { get; set; }
         public virtual DbSet<Pos_MethodOfPayment>  Pos_MethodOfPayments { get; set; }
         public virtual DbSet<Shift> Pos_Shifts { get; set; }
+
+
+        public virtual DbSet<InventoryTransaction> Pos_InventoryTransaction { get; set; }
+        public virtual DbSet<Site> Pos_Site { get; set; }
+        public virtual DbSet<Warehouse> Pos_Warehouse { get; set; }
+
+
+
+
         // Add a new table for storing the last invoice number used for each company
         public DbSet<CompanyInvoiceNumber> Pos_CompanyInvoiceNumbers { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -79,6 +89,17 @@ namespace BlazorAppSales.Data
         public string Name { get; set; }
         public List<Product> Products { get; set; }
         public List<Order> Orders { get; set; }
+
+
+        public string ReceiptHeader1 { get; set; } = "";
+        public string ReceiptHeader2 { get; set; } = "";
+        public string ReceiptHeader3 { get; set; } = "";
+
+
+        public string ReceiptFooter1 { get; set; } = "";
+        public string ReceiptFooter2 { get; set; } = "";
+        public string ReceiptFooter3 { get; set; } = "";
+
     }
 
     public class CompanyInvoiceNumber

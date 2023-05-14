@@ -1,0 +1,51 @@
+﻿@using BlazorAppSales.Data;
+<tr @onclick="() => AddToCart()">
+    <td>@product.Name</td>
+    <td>@product.Price.ToString("C")</td>
+@*    <td>
+        <button class="btn btn-primary" @onclick="() => AddToCart()"> + </button>
+    </td>*@
+
+    <td>
+        @if (@ImageDatax != null)
+        {
+            <div class="imageContainer">
+                <img class="img_hoverxxxx" src="@imgSrc_ImageData1" width="55px" height="55px" />
+            </div>
+        }
+    </td>
+</tr>
+@code {
+    [Parameter]
+    public Product product { get; set; }
+
+
+    public byte[] ImageDatax
+    {
+        get
+        {
+            return product.logo;
+        }
+        set
+        {
+            product.logo = value;
+            StateHasChanged();
+        }
+    }
+    string imgSrc_ImageData1 = "";
+
+    protected override Task OnInitializedAsync()
+    {
+
+        imgSrc_ImageData1 = ClassLibraryUtil.ClassImageUtil.get_image_base64(product.logo);
+
+        return base.OnInitializedAsync();
+    }
+
+
+    [Parameter] public EventCallback OnAddToCart { get; set; }
+    private void AddToCart()
+    {
+        OnAddToCart.InvokeAsync();
+    }
+}

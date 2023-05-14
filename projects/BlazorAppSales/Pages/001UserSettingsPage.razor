@@ -44,9 +44,6 @@
                     </div>
                 </div>
         </div>
-
-
-         
         <br />
         @if (@ImageDatax != null)
         {
@@ -116,8 +113,6 @@
 
         currentUser = db_identity.Users.Where(u => u.Email == currentUserEmail).First();
         //  db_idintity.Users.ToList()[0].
-
-        
     }
  
 
@@ -150,7 +145,6 @@
     }
 
     string imgSrc_ImageData1 = "";
-
     InputFile inputy;
     public async Task UploadImage(InputFileChangeEventArgs e)
     {

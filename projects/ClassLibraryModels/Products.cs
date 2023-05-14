@@ -18,6 +18,7 @@ namespace BlazorAppSales.Data
         public int ProductId { get; set; }
         public string Number { get; set; }
         public string Name { get; set; }
+        public string Barcode { get; set; }
         [Column(TypeName = "decimal(18,2)")]
         public decimal Price { get; set; }
         public int Stock { get; set; }
@@ -32,8 +33,12 @@ namespace BlazorAppSales.Data
 
         [InverseProperty("Parent_Product")]
         public ICollection<RelatedProduct> RelatedProducts { get; set; }
+        public byte[]? logo { get; set; }
 
-       // [InverseProperty("Parent_Product")]
+        public bool ShowLines { get; set; } = false;
+
+
+        // [InverseProperty("Parent_Product")]
         //public ICollection<RelatedProduct> ParentProducts { get; set; }
         public override string ToString()
         {
@@ -80,7 +85,7 @@ namespace BlazorAppSales.Data
 
 
 
-    public class ProductTypeConverter : System.ComponentModel.TypeConverter//<string, Product>
+    public class ProductTypeConverter : TypeConverter//<string, Product>
     {
         private readonly IProductService _productService;
 

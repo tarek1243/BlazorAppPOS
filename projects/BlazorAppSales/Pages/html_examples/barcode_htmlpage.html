@@ -1,0 +1,72 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Barcode Label Generator</title>
+    <script src="https://cdn.jsdelivr.net/jsbarcode/3.6.0/JsBarcode.all.min.js"></script>
+</head>
+<body>
+
+    <h1>Barcode Label Generator</h1>
+
+    <form onsubmit="generateBarcode(); return false;">
+        <label for="item-number">Item Number:</label>
+        <input type="text" id="item-number" name="item-number" required><br><br>
+
+        <button type="button">Generate Barcode</button>
+    </form>
+
+    <br><br>
+
+    <div id="barcode"></div>
+
+
+    <svg id="barcode1" style=" margin: 30px;"></svg>
+    <svg id="barcode2"></svg>
+    <svg id="barcode3"></svg>
+
+
+    <script type="text/javascript">
+
+        function generateBarcode() {
+            var itemNumber = document.getElementById("item-number").value;
+            JsBarcode("#barcode", itemNumber, {
+                format: "CODE128",
+                displayValue: true,
+                fontSize: 20,
+                margin: 10
+            });
+            document.getElementById("item-number").value = "";
+            document.getElementById("item-number").focus();
+
+
+
+            JsBarcode("#barcode1", "Hi!", {
+                fontSize: 40,
+                background: "#4b8b7f",
+                lineColor: "#ffffff",
+                margin: 40,
+                marginLeft: 80
+            });
+
+            JsBarcode("#barcode2", "Hi!", {
+                textAlign: "left",
+                textPosition: "top",
+                font: "cursive",
+                fontOptions: "bold",
+                fontSize: 40,
+                textMargin: 15,
+                text: "Special"
+            });
+
+            JsBarcode("#barcode3", "1234", {
+                format: "pharmacode",
+                displayValue: false,
+                height: 50,
+                width: 6
+            });
+        }
+
+    </script>
+
+</body>
+</html>

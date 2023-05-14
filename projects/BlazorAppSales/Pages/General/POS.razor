@@ -9,31 +9,7 @@
 @inject IJSRuntime JsRuntime
 @inject AuthenticationStateProvider authenticationStateProvider
 
-
-
-<h1>Point of Sale</h1>
-
-
-@*
-@if (!is_paying)
-{
-    @foreach (var p in pos_MethodOfPayments)
-    {
-        <button class="btn btn-outline-dark" @onclick="(() => pay1(p))">@p.Name</button>
-    }
-}
-else
-{
-    if (current_Pos_MethodOfPayment != null)
-    {
-        <input class="form-control" @bind-value="amount_to_pay" />
-        <button class="btn btn-outline-dark" @onclick="pay2">@current_Pos_MethodOfPayment.Name</button>
-    }
-}
-@if (unPaid_remaining_Total_With_VAT != 0)
-{
-    <span class="badge bg-danger ">@unPaid_remaining_Total_With_VAT</span>
-}*@
+@*<h1>POS SA</h1>*@
 
 @if (!ShiftIsOpen)
 {
@@ -46,19 +22,15 @@ else
 
 @if (ShiftIsOpen)
 {
-    <div class="row" style=" border: 1px solid black; overflow: auto;">
-        
-
+    <div class="row" style="border: 1px solid black; overflow: auto;">
+        @*nain panel*@
         <div class="col-md-8">
             <div class="card">
                 <div class="card-body" style=" overflow: auto;">
-                    <div class="input-group mb-3">
-                    </div>
                     <div class="row">
                         <div class="col-md-8">
-                            <h4>Products</h4>
-
-                            <input type="text" class="form-control" placeholder="Search by product name or number" @bind="@searchQuery_item"
+                            @*<h4>Products</h4>*@
+                            <input type="text" class="form-control" placeholder="Search product name or number" @bind="@searchQuery_item"
                                @oninput="(e)=> searchQuery_item = e.Value.ToString()"
                                @onkeydown="Search" />
 
@@ -66,11 +38,19 @@ else
 
                                 @foreach (var tag_name_str in productTags)
                                 {
-                                    <label>
+                             @*       <label>
                                         <input type="radio" name="option" value="@tag_name_str"
                                        @onchange="(()=>OnChange_selectedTagFilter(tag_name_str))">
-                                        <span class="button p-1 "> &nbsp; &nbsp; @tag_name_str</span>
-                                    </label>
+                                        <span class=" badge p-1 "> &nbsp; &nbsp; @tag_name_str</span>
+                                    </label>*@
+                                    @if (selectedTagFilter == tag_name_str)
+                                    {
+                                        <span class=" badge bg-dark m-2 centered" @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))">@tag_name_str</span>
+                                    }
+                                    else
+                                    {
+                                        <span class=" badge bg-warning" @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))">@tag_name_str</span>
+                                    }
                                 }
                             </div>
                             <table class="table table-striped">
@@ -78,6 +58,7 @@ else
                                     <tr>
                                         <th>Name</th>
                                         <th>Price</th>
+                                        @*<th></th>*@
                                         <th></th>
                                     </tr>
                                 </thead>
@@ -85,13 +66,11 @@ else
                                     @if (Products != null)
                                         @foreach (var product in Products)
                                         {
-                                            <tr>
-                                                <td>@product.Name</td>
-                                                <td>@product.Price.ToString("C")</td>
-                                                <td>
-                                                    <button class="btn btn-primary" @onclick="() => AddToCart(product)"> + </button>
-                                                </td>
-                                            </tr>
+                                            <BlazorAppSales.Pages.Components.ProductPOSSelectComponent product="product"
+                                                                                           OnAddToCart="(()=>AddToCart(product))">
+
+                                            </BlazorAppSales.Pages.Components.ProductPOSSelectComponent>
+
                                         }
                                 </tbody>
                             </table>
@@ -114,10 +93,9 @@ else
                                         {
                                             <BlazorAppSales.Pages.Components.OrderLineCartComponent ol="orderLine"
                                                                                         OnDeleteOrderLine=DeleteOrderLine
-                                            OnNeedRecalc=calc_total
-                                            OnCreateSupplementary=CreateSupplementary
-                                            ></BlazorAppSales.Pages.Components.OrderLineCartComponent>
-                                           
+                                                                                        OnNeedRecalc=calc_total
+                                                                                        OnCreateSupplementary=CreateSupplementary></BlazorAppSales.Pages.Components.OrderLineCartComponent>
+
                                         }
                                     <tr>
                                         <td colspan="3">Total</td>
@@ -144,7 +122,6 @@ else
                             }
                         </div>
                     </div>
-
                     <div id="summary-report" style="display:none">
                         <h2>Summary Report</h2>
                         <table class="table table-striped">
@@ -166,22 +143,12 @@ else
                             </tbody>
                         </table>
                     </div>
-
-
-                    @*         <label for="customerSelect">Select customer:</label>
-                <select id="customerSelect" @bind="selectedCustomer">
-                <option value="">-- Select --</option>
-                @foreach (var customer in customers)
-                {
-                <option value="@customer">@customer.Name</option>
-                }
-                </select>*@
                     <CustomerSelector current_companyName="@currentUser.CompanyName" Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
                 </div>
             </div>
         </div>
 
-
+        @*receipt*@
         <div class="col-md-4">
             <div class="card">
                 <div class="card-body">
@@ -195,16 +162,8 @@ else
                 </div>
             </div>
         </div>
-
     </div>
 }
-
-@*@if (CurrentOrder!=null)
-{
-    <OrderPage orderIdx='@CurrentOrder.Id.ToString()' @ref="orderPage1"></OrderPage>
-}*@
-
-
 
 
 @code {
@@ -220,7 +179,7 @@ else
                 new_ol.Quantity = relatedProduct.Qty * ol.Quantity;
                 new_ol.Price = relatedProduct.Price;
                 new_ol.Total = new_ol.Quantity * new_ol.Price;
-                new_ol.IsSupplementary = true ; 
+                new_ol.IsSupplementary = true;
                 orderLines.Add(new_ol);
                 calc_total();
 
@@ -233,13 +192,5 @@ else
         //os.DeleteOrderAsync(order.Id);
         //orders = orders.Where(o => o.Id != order.Id).ToList();
         calc_total();
-    }
-
-
-    string selectedTagFilter = "";
-    private void OnChange_selectedTagFilter(string selected)
-    {
-        selectedTagFilter = selected;
-        Search();
     }
 }

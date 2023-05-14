@@ -114,23 +114,7 @@ namespace BlazorAppSales.Pages.General
             calc_total();
 
         }
-        private void Search()
-        {
-            // if (!string.IsNullOrEmpty(searchQuery))
-            {
-                // Filter items based on search query
-                Products = ProductsAll.Where(i => i.Name.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase) || i.Number.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)).ToList();
-            }
-            if (selectedTagFilter != "")
-                // Assuming you have a list of products named 'products' and a string variable named 'tagName' for the tag you want to filter by
-                Products = Products.Where(p => p.ProductTags.Any(t => t.Name.Contains(selectedTagFilter))).ToList();
-
-        }
-        private void ClearSearch()
-        {
-            searchQuery_item = string.Empty;
-            Search(); // Reload all items
-        }
+    
         private async Task OpenShift()
         {
             // Check if there is an open shift already
@@ -321,6 +305,59 @@ namespace BlazorAppSales.Pages.General
             // Save changes to the database
             //await db.SaveChangesAsync();
         }
+
+
+
+
+
+
+
+
+        private void Search()
+        {
+            // if (!string.IsNullOrEmpty(searchQuery))
+            //{
+            // Filter items based on search query
+            Products = ProductsAll.Where(i => i.Name.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)
+            
+            || i.Number.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)
+            || i.Barcode.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)
+            
+            ).ToList();
+            //}
+            if (selectedTagFilter != "")
+                // Assuming you have a list of products named 'products' and a string variable named 'tagName' for the tag you want to filter by
+                Products = Products.Where(p => p.ProductTags.Any(t => t.Name.Contains(selectedTagFilter))).ToList();
+
+            if(Products.Count()==1)
+                if (
+
+                    Products[0].Name==searchQuery_item ||
+                    Products[0].Number==searchQuery_item ||
+                    Products[0].Barcode==searchQuery_item 
+                    
+                    )
+                AddToCart(Products[0]);
+               
+        }
+        private void ClearSearch()
+        {
+            searchQuery_item = string.Empty;
+            Search(); // Reload all items
+        }
+
+        string selectedTagFilter = "";
+        private void OnChange_selectedTagFilter(string selected)
+        {
+            if (selectedTagFilter == selected)
+                selectedTagFilter = "";
+            else
+                selectedTagFilter = selected;
+            Search();
+        }
+
+
+
     }
 
 }
@@ -343,79 +380,7 @@ namespace BlazorAppSales.Pages.General
 
 
 
-
-
-
-/*
-    private async Task SaveNewCustomer()
-    {
-        // Save the new customer to the database
-        DbContext.Customers.Add(newCustomer);
-        await DbContext.SaveChangesAsync();
-
-        // Add the new customer to the list of customers
-        customers.Add(newCustomer);
-
-        // Reset the new customer form and hide it
-        newCustomer = new Customer();
-        showNewCustomerForm = false;
-    }
-
-    private void CancelNewCustomer()
-    {
-        // Reset the new customer form and hide it
-        newCustomer = new Customer();
-        showNewCustomerForm = false;
-    } 
-
-
- private bool showNewCustomerForm { get; set; }
-
-    private void CreateNewCustomer()
-    {
-        // Show the new customer form
-        showNewCustomerForm = true;
-    }
-
-    private void CreateNewCustomerx()
-    {
-        // Add the new customer to the database
-        db.Customers.Add(newCustomer);
-        db.SaveChanges();
-
-        // Select the new customer
-        selectedCustomer = newCustomer;
-
-        // Hide the new customer form
-        showNewCustomerForm = false;
-
-        // Reset the new customer information
-        newCustomer = new Customer();
-    }
  
-   @*         @if (showNewCustomerForm)
-                    {
-                        <div class="create-customer-form">
-                            <h3>Create New Customer</h3>
-                            <div class="form-group">
-                                <label for="customer-name">Name:</label>
-                                <input type="text" class="form-control" id="customer-name" @bind-value="newCustomer.Name" />
-                            </div>
-                            <div class="form-group">
-                                <label for="customer-email">Email:</label>
-                                <input type="email" class="form-control" id="customer-email" @bind-value="newCustomer.Email" />
-                            </div>
-                            <div class="form-group">
-                                <label for="customer-phone">Phone:</label>
-                                <input type="tel" class="form-control" id="customer-phone" @bind-value="newCustomer.Phone" />
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-primary" @onclick="SaveNewCustomer">Save</button>
-                                <button type="button" class="btn btn-secondary" @onclick="CancelNewCustomer">Cancel</button>
-                            </div>
-                        </div>
-                    }*@
- */
 
 
 
@@ -424,17 +389,4 @@ namespace BlazorAppSales.Pages.General
 
 
 
-
-
-
-
-
-//                         <button class="btn btn-primary" @onclick="AddLine">Add Line</button>
-//
-//private void AddLine()
-//{
-//    var product = new Product();
-//    var cartItem = new CartItem { Product = product, Quantity = 1 };
-//    Cart.Add(cartItem);
-//}
 

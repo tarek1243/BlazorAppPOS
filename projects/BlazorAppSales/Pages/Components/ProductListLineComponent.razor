@@ -1,5 +1,204 @@
-﻿<h3>ProductListLineComponent</h3>
+﻿@using BlazorAppSales.Data;
+
+
+<tr>
+    <td>
+        @if (product.RelatedProducts.Count() > 0)
+        {
+        <button class="btn btn-primary" @onclick="(() =>  expand_product_close_others(product)) ">
+            @if (product.ShowLines)
+            {
+                <span>-</span>
+            }
+            else
+            {
+                <span>+</span>
+            }
+            </button>
+            }
+        <a href="@($"/shifts/{product.Id}")">@product.Id</a>
+    </td>
+
+    <td>
+        <input style="display:inline-block;" @bind-value="@product.Id" size="5" disabled />
+        <input class="form-control w-50" placeholder="Item Name" style="display:inline-block;" @bind-value="@product.Name" />
+    </td>
+    <td>
+        <input class="form-control" type="number" @bind-value="@product.Price" />
+    </td>
+    <td>
+        @*<input class="form-control" value="@product.Tags" @onchange="() => UpdateProductTags(product)" />*@
+        @if (product.ProductTags == null) { product.ProductTags = new List<ProductTag>(); }
+        <input class="form-control" list="texts" multiple type="email" value="@string.Join(", ", product.ProductTags)" @onchange="@(e => UpdateProductTags(product, e.Value.ToString()))" />
+    </td>
+    <td>
+        <button class="btn btn-primary" @onclick="() => EditProduct(product)">Save</button>
+        <button class="btn btn-primary" @onclick="() => AddSupplementary(product)">Add Supplementary</button>
+    </td>
+</tr>
+<tr >
+    <td colspan="5">
+    <div class="form-group">
+        <InputFile @ref="inputy" OnChange="UploadImage" class=" form-control form-control-file"></InputFile>
+    </div>
+        @if (@ImageDatax != null)
+        {
+            <br />
+            <div class="imageContainer">
+                Image :
+                <img class="img_hoverxxxx" src="@imgSrc_ImageData1" width="222px" height="222px" />
+            </div>
+        }
+    </td>
+
+</tr>
+@if (product.ShowLines)
+@if (product.RelatedProducts.Count() > 0)
+{
+    <tr>
+        <td colspan="5">
+            <div class="fancy-div">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>related #</th>
+                            <th>qty</th>
+                            <th>price</th>
+                            <th>total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (product.RelatedProducts != null)
+                            @foreach (var related_prod in product.RelatedProducts)
+                            {
+                                <BlazorAppSales.Pages.Components.RelatedProductEntryComponent current_related_product=related_prod
+                                                                                  products=products_noTracking>
+
+                                </BlazorAppSales.Pages.Components.RelatedProductEntryComponent>
+                                @*K@if (prod.ShowLines)
+                    {
+                    <tr>
+                    @if (latestShift != @order.shift_Id)
+                    {
+                    <td class="centered" style=" padding: 0; margin: 0; height:100%;    background-color: #4CAF50;" rowspan='@Orders.Where(o => o.shift_Id==@order.shift_Id).Count()'>
+                    <div style="width: 100%; height: 100%;">
+                    @order.shift_Id
+                    </div>
+                    </td>
+                    }
+                    </tr>
+                    }*@
+                            }
+                    </tbody>
+                </table>
+            </div>
+        </td>
+    </tr>
+}
+
+
 
 @code {
+    protected override Task OnInitializedAsync()
+    {
 
+        imgSrc_ImageData1 = ClassLibraryUtil.ClassImageUtil.get_image_base64(product.logo);
+
+        return base.OnInitializedAsync();
+    }
+
+    void expand_product_close_others(Product product1)
+    {
+        bool temp = product1.ShowLines;
+
+        OnNeedCollapseAllProducts.InvokeAsync();
+
+        product1.ShowLines = !temp;
+    }
+
+    [Parameter] public EventCallback OnNeedCollapseAllProducts { get; set; }
+
+
+
+    [Parameter]
+    public Product product { get; set; }
+
+    [Parameter]
+    public List<Product> products_noTracking { get; set; }
+
+    [Parameter]
+
+    public ProductService productService { get; set; }
+
+
+        private async Task AddSupplementary(Product product)
+    {
+        if (product.RelatedProducts == null) product.RelatedProducts = new List<RelatedProduct>();
+        RelatedProduct rel_product = new RelatedProduct();
+        rel_product.Parent_ProductId = product.Id;
+        rel_product.Related_ProductId = 3;//product.ProductId;//must be changed
+        rel_product.Qty = 1;
+        product.RelatedProducts.Add(rel_product);
+        // await productService.UpdateProduct(product);
+    }
+
+
+
+    private async Task EditProduct(Product product)
+    {
+        await productService.UpdateProduct(product);
+    }
+
+
+    private async void UpdateProductTags(Product product, string newTags)
+    {
+        var tags = newTags.Split(",").Select(x => x.Trim()).ToList();
+        List<ProductTag> tags_objects = tags.Select(tag => new ProductTag { Name = tag }).ToList();
+        product.ProductTags = tags_objects;
+        await productService.UpdateProduct(product);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    string imgSrc_ImageData1 = "";
+    InputFile inputy;
+    public async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            MemoryStream ms = new MemoryStream();
+            Stream stream = file.OpenReadStream();
+            await stream.CopyToAsync(ms);
+            stream.Close();
+            ImageDatax = ms.ToArray();
+            ms.Close();
+            ms.Dispose();
+            imgSrc_ImageData1 = ClassLibraryUtil.ClassImageUtil.get_image_base64(ImageDatax);
+            StateHasChanged();
+        }
+
+    }
+
+    public byte[] ImageDatax
+    {
+        get
+        {
+            return product.logo;
+        }
+        set
+        {
+            product.logo = value;
+            StateHasChanged();
+        }
+    }
 }
