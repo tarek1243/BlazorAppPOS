@@ -31,7 +31,7 @@ namespace BlazorAppSales.Data
         public virtual DbSet<Order> Pos_Orders { get; set; }
         public virtual DbSet<OrderLine> Pos_OrderLines { get; set; }
         public virtual DbSet<Customer> Pos_Customers { get; set; }
-        public virtual DbSet<Pos_MethodOfPayment>  Pos_MethodOfPayments { get; set; }
+        public virtual DbSet<Pos_MethodOfPayment> Pos_MethodOfPayments { get; set; }
         public virtual DbSet<Shift> Pos_Shifts { get; set; }
 
 
@@ -65,9 +65,13 @@ namespace BlazorAppSales.Data
                 .UsingEntity(j => j.ToTable("Pos_ProductProductTag"));
 
 
+            modelBuilder.Entity<InventoryTransaction>()
+    .HasOne(pt => pt.Warehouse)
+    .WithMany(p => p.InventoryTransactions)
+    .OnDelete(DeleteBehavior.NoAction);
 
-           // modelBuilder.Entity<Product>().HasMany(prod => prod.RelatedProducts).WithOne(p => p.Parent_Product).OnDelete(DeleteBehavior.NoAction)
-             //   ;
+            // modelBuilder.Entity<Product>().HasMany(prod => prod.RelatedProducts).WithOne(p => p.Parent_Product).OnDelete(DeleteBehavior.NoAction)
+            //   ;
 
 
             /*            modelBuilder.Entity<Product>()

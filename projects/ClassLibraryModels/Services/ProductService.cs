@@ -92,6 +92,7 @@ namespace BlazorAppSales.Data
             // Your code to update the product in the database goes here
             // For example:
             dbContext.Pos_Products.Attach(product);
+            dbContext.Pos_Products.Update(product);
             await dbContext.SaveChangesAsync();
         }
 

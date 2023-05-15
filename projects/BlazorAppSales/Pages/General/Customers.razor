@@ -1,6 +1,6 @@
 ﻿@page "/customers"
 @inject IJSRuntime jsRuntime
-@inject CustomerService  customerService
+@inject CustomerService customerService
 @inject AuthenticationStateProvider authenticationStateProvider
 
 @using BlazorAppSales.Data;
@@ -10,12 +10,9 @@
 
 <h3>Customers</h3>
 
-    
-
-
-<div >
+<div>
     <span style="float:right">
-        <button class="btn btn-primary" @onclick="() => DbContext.SaveChanges()">Save</button>
+        <button class="btn btn-primary" @onclick="() => SaveTransactions()">Save</button>
         <button class="btn btn-success" @onclick="() => add()">Add</button>
     </span>
 
@@ -48,10 +45,10 @@
                         <input type="text" @bind-value="@customer.CustGroup" class="form-control" />
                     </td>
                     <td>
-                        @if (@customer.Orders.Count()==0)
+                        @if (@customer.Orders.Count() == 0)
                         {
-                        <button class="btn btn-danger btn-sm" @onclick="() => Delete(customer)">
-                            <i class="bi bi-trash">X</i>
+                            <button class="btn btn-danger btn-sm" @onclick="() => Delete(customer)">
+                                <i class="bi bi-trash">X</i>
                             </button>
                         }
                         else
@@ -101,12 +98,6 @@
 
     DbContextMainData DbContext = new DbContextMainData();
     private List<Customer> customers { get; set; } = new List<Customer>();
-    //protected override async Task OnInitializedAsync()
-    //{
-    //    customers = DbContext.Pos_Customers.Include(o => o.Orders).ToList();
-    //}
-
-
 
     ApplicationDbContext db_identity = new ApplicationDbContext();
     WebApp1User currentUser;
@@ -129,12 +120,34 @@
         DbContext.Pos_Customers.Remove(cust);
     }
 
-    private void add( )
+    private void add()
     {
         Customer cust = new Customer();
-        cust.CompanyName = currentUser.CompanyName; 
+        cust.CompanyName = currentUser.CompanyName;
         cust.Orders = new List<Order>();
         customers.Add(cust);//= DbContext.Pos_Customers.Include(o => o.Orders).ToList();
         DbContext.Pos_Customers.Add(cust);
     }
+
+    private void SaveTransactions()
+    {
+        using (var dbContext = new DbContextMainData()) // Replace with your EF Core DbContext
+        {
+            foreach (var c in customers)
+            {
+                if (dbContext.Pos_Customers.Entry(c).State == EntityState.Added)
+                    dbContext.Pos_Customers.Add(c);
+                else if (dbContext.Pos_Customers.Entry(c).State == EntityState.Modified)
+                    dbContext.Pos_Customers.Update(c);
+                else if (dbContext.Pos_Customers.Entry(c).State == EntityState.Detached)
+                {
+                    dbContext.Pos_Customers.Attach(c);
+                    dbContext.Pos_Customers.Update(c);
+                }
+            }
+            dbContext.SaveChanges();
+        }
+    }
+
+
 }

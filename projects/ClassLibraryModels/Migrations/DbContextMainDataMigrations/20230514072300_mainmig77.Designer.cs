@@ -4,6 +4,7 @@ using BlazorAppSales.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 {
     [DbContext(typeof(DbContextMainData))]
-    partial class DbContextMainDataModelSnapshot : ModelSnapshot
+    [Migration("20230514072300_mainmig77")]
+    partial class mainmig77
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -462,9 +465,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
@@ -479,9 +479,6 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     b.Property<int>("WarehouseId")
                         .HasColumnType("int");
-
-                    b.Property<string>("created_by_user_email")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -502,14 +499,8 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("created_by_user_email")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -525,18 +516,12 @@ namespace ClassLibraryModels.Migrations.DbContextMainDataMigrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("CompanyName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Site_Id")
                         .HasColumnType("int");
-
-                    b.Property<string>("created_by_user_email")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("siteId")
                         .HasColumnType("int");

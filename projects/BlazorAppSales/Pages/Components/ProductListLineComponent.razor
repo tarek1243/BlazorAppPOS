@@ -20,7 +20,7 @@
     </td>
 
     <td>
-        <input style="display:inline-block;" @bind-value="@product.Id" size="5" disabled />
+        @*<input style="display:inline-block;" @bind-value="@product.Id" size="5" disabled />*@
         <input class="form-control w-50" placeholder="Item Name" style="display:inline-block;" @bind-value="@product.Name" />
     </td>
     <td>
@@ -39,7 +39,7 @@
 <tr >
     <td colspan="5">
     <div class="form-group">
-        <InputFile @ref="inputy" OnChange="UploadImage" class=" form-control form-control-file"></InputFile>
+        <InputFile @ref="inputy" OnChange="UploadImage" class="small form-control form-control-file"></InputFile>
     </div>
         @if (@ImageDatax != null)
         {

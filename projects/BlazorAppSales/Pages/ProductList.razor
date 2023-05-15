@@ -32,16 +32,12 @@ else
         <tbody>
             @foreach (var product in products)
             {
-
-
                 <BlazorAppSales.Pages.Components.ProductListLineComponent product="product"
                                                                   products_noTracking=products_noTracking
                                                                   productService=productService
-                
                 OnNeedCollapseAllProducts="(()=>collapsAll())"
                 >
                 </BlazorAppSales.Pages.Components.ProductListLineComponent>
-
             }
         </tbody>
     </table>
@@ -50,11 +46,14 @@ else
 
 
 @code {
+
+    WebApp1User currentUser;
+    ApplicationDbContext applicationDbContext = new ApplicationDbContext();
+
+
     void collapsAll()
     {
         products.ForEach(p => p.ShowLines = false);
-
-
     }
 
     Product selected_product = new Product();
@@ -70,8 +69,6 @@ else
         products = await productService.GetProductsAsync(currentUser.CompanyName);
         products_noTracking = await productService.GetProductsAsNoTrackingAsync();
         productTags = await productService.GetProductsTagsAsync();
-
-        
     }
 
     //private async void UpdateProductTags(Product product, string newTags)
@@ -89,8 +86,6 @@ else
         await productService.DeleteProductAsync(productId);
         products = products.Where(p => p.Id != productId).ToList();// await productService.GetProductsAsync(currentUser.CompanyName);
     }
-    WebApp1User currentUser;
-    ApplicationDbContext applicationDbContext = new ApplicationDbContext();
 
     // bool isAdmin = false;
     private async Task ReadCurrent()
@@ -129,11 +124,5 @@ else
     {
         // product.Tags = eventArgs.Value.ToString();
     }
-
-
-
-
-
-
 
 }

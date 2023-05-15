@@ -82,6 +82,10 @@
 
 @code {
 
+    OrderService os = new OrderService();
+    private List<Shift> shifts;
+    ApplicationDbContext db_identity = new ApplicationDbContext();
+    WebApp1User currentUser;
 
     void expand_shift_close_others(Shift shift)
     {
@@ -90,11 +94,6 @@
         shift.ShowLines = !temp;
     }
 
-    OrderService os = new OrderService();
-
-    private List<Shift> shifts;
-    ApplicationDbContext db_identity = new ApplicationDbContext();
-    WebApp1User currentUser;
     protected override async Task OnInitializedAsync()
     {
         string currentUserEmail = await Util.ClassCurrentSessionUtil.GetUserEmail(authenticationStateProvider);

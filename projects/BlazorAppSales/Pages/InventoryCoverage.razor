@@ -1,0 +1,104 @@
+﻿@page "/inventorycoverage"
+
+@using System.Linq
+@using BlazorAppSales.Data;
+@using Microsoft.EntityFrameworkCore
+
+<h3>Inventory Coverage</h3>
+
+<div>
+    <label for="fromDate">From:</label>
+    <input type="date" id="fromDate" @bind="fromDate" />
+    <label for="toDate">To:</label>
+    <input type="date" id="toDate" @bind="toDate" />
+    <button @onclick="FilterSales">Filter</button>
+</div>
+
+@if (inventoryCoverages != null)
+{
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Inventory Quantity</th>
+                <th>Sales Quantity</th>
+                <th>Coverage (Days)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var coverage in inventoryCoverages)
+            {
+                <tr>
+                    <td>@coverage.Product.Name</td>
+                    <td>@coverage.InventoryQuantity</td>
+                    <td>@coverage.SalesQuantity</td>
+                    <td>@coverage.CoverageDays</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+@*<p>sql</p>*@
+
+@code {
+    private List<InventoryCoverageClass> inventoryCoverages;
+    private DateTime fromDate;
+    private DateTime toDate;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Initialize fromDate and toDate with appropriate default values
+        fromDate = DateTime.Today.AddDays(-7);
+        toDate = DateTime.Today;
+
+        await FilterSales();
+    }
+
+    private async Task FilterSales()
+    {
+        using (var dbContext = new DbContextMainData()) // Replace with your EF Core DbContext
+        {
+            var salesQuery = dbContext.Pos_Orders
+                .Include(s => s.OrderLines)
+                .ThenInclude(sl => sl.Product)
+                //.Where(s => s.OrderDate >= fromDate && s.OrderDate <= toDate)
+                ;
+                var sales = salesQuery.ToList();
+            var inventoryQuery = dbContext.Pos_InventoryTransaction
+                .GroupBy(it => it.ProductId)
+                .Select(g => new
+                {
+                    ProductId = g.Key,
+                    Quantity = g.Sum(it => it.Quantity)
+                });
+            var inv = inventoryQuery.ToList();
+
+            var inventoryCoveragesQuery = from sl in salesQuery.SelectMany(s => s.OrderLines)
+                                          join i in inventoryQuery on sl.product_id equals i.ProductId into joined
+                                          from j in joined.DefaultIfEmpty()
+                                          select new InventoryCoverageClass
+                                              {
+                                                  Product = sl.Product,
+                                                  InventoryQuantity = j != null ? j.Quantity : 0,
+                                                  SalesQuantity = sl.Quantity
+                                              };
+
+           // sql = inventoryCoverages.AsQueryable().ToQueryString();
+            inventoryCoverages = await inventoryCoveragesQuery.ToListAsync();
+        }
+
+    }
+    string sql = "";
+
+    private class InventoryCoverageClass
+    {
+        public Product? Product { get; set; }
+        public decimal? InventoryQuantity { get; set; }
+        public decimal? SalesQuantity { get; set; }
+
+        public decimal? CoverageDays => InventoryQuantity > 0 ? InventoryQuantity / SalesQuantity : 0;
+    }
+}

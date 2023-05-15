@@ -45,11 +45,13 @@ else
                                     </label>*@
                                     @if (selectedTagFilter == tag_name_str)
                                     {
-                                        <span class=" badge bg-dark m-2 centered" @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))">@tag_name_str</span>
+                                        <h3 class="rounded  bg-dark m-2 centered " @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))"><span class="badge badge-secondary">@tag_name_str</span></h3>
                                     }
                                     else
                                     {
-                                        <span class=" badge bg-warning" @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))">@tag_name_str</span>
+                                        <h4 class=" rounded bg-warning m-2 centered " @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))"><span class="badge badge-secondary">@tag_name_str</span></h4>
+
+                                        @*<h4 class=" badge bg-warning" @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))">@tag_name_str</h4>*@
                                     }
                                 }
                             </div>

@@ -64,37 +64,12 @@ namespace BlazorAppSales.Pages.General
         {
             currentUser = await Util.ClassCurrentSessionUtil.GetUser(authenticationStateProvider, applicationDbContext);
             //isAdmin = await Util.ClassCurrentSessionUtil.CheckIfUserHasRole(authenticationStateProvider, applicationDbContext, "Admin");
+        
+        currentCompanyName = currentUser.CompanyName;
         }
 
         private ProductService productService;
 
-
-        protected override async Task OnInitializedAsync()
-        {
-
-
-            ProductsAll = DbContext.Pos_Products.Include(p => p.RelatedProducts).ToList();
-            Products = DbContext.Pos_Products.Include(p => p.RelatedProducts).Include(p => p.ProductTags).ToList();
-            Orders = DbContext.Pos_Orders.ToList();
-            customers = DbContext.Pos_Customers.ToList();
-            orderLines = new List<OrderLine>();
-
-
-            productService = new ProductService();
-
-            // productTags = await productService.GetProductsTagsAsync();
-            // productTags = await productService.GetProductsTagsLinkedWithProductsAsync();
-            var productTags_objects = await productService.GetProductTagsWithProducts();
-            productTags = productTags_objects.Select(t => t.Name).ToList();
-            await ReadCurrent();
-
-
-            if (currentUser != null)
-            {
-                CustomerService cs = new CustomerService();
-                pos_MethodOfPayments = await cs.GetPos_MethodOfPayment_list(currentUser.CompanyName);
-            }
-        }
         private void AddToCart(Product product)
         {
             var cartItem = orderLines.FirstOrDefault(item => item.Product.Id == product.Id);
@@ -121,8 +96,6 @@ namespace BlazorAppSales.Pages.General
             var openShift = await db.Pos_Shifts.FirstOrDefaultAsync(s => s.IsOpen 
             &&              s.EmployeeNumber==currentUser.EmployeeNumber
             &&              s.CompanyName==currentUser.CompanyName
-
-
             );
 
             if (openShift != null)
@@ -306,20 +279,14 @@ namespace BlazorAppSales.Pages.General
             //await db.SaveChangesAsync();
         }
 
-
-
-
-
-
-
-
         private void Search()
         {
             // if (!string.IsNullOrEmpty(searchQuery))
             //{
             // Filter items based on search query
-            Products = ProductsAll.Where(i => i.Name.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)
+            Products = ProductsAll.Where(i => 
             
+            i.Name.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)
             || i.Number.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)
             || i.Barcode.Contains(searchQuery_item, StringComparison.OrdinalIgnoreCase)
             
@@ -340,6 +307,32 @@ namespace BlazorAppSales.Pages.General
                 AddToCart(Products[0]);
                
         }
+        protected override async Task OnInitializedAsync()
+        {
+            await ReadCurrent();
+             
+
+            ProductsAll = DbContext.Pos_Products.Where(p => p.CompanyName==currentCompanyName) .Include(p => p.RelatedProducts).Include(p => p.ProductTags).ToList();
+            Products = ProductsAll;// DbContext.Pos_Products.Include(p => p.RelatedProducts).Include(p => p.ProductTags).ToList();
+            Orders = DbContext.Pos_Orders.ToList();
+            customers = DbContext.Pos_Customers.ToList();
+            orderLines = new List<OrderLine>();
+
+
+            productService = new ProductService();
+
+            // productTags = await productService.GetProductsTagsAsync();
+            // productTags = await productService.GetProductsTagsLinkedWithProductsAsync();
+            var productTags_objects = await productService.GetProductTagsWithProducts();
+            productTags = productTags_objects.Select(t => t.Name).ToList();
+
+
+            if (currentUser != null)
+            {
+                CustomerService cs = new CustomerService();
+                pos_MethodOfPayments = await cs.GetPos_MethodOfPayment_list(currentUser.CompanyName);
+            }
+        }
         private void ClearSearch()
         {
             searchQuery_item = string.Empty;
@@ -355,11 +348,7 @@ namespace BlazorAppSales.Pages.General
                 selectedTagFilter = selected;
             Search();
         }
-
-
-
     }
-
 }
 
 

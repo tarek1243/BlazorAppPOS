@@ -36,6 +36,25 @@ BayanPOS*@
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Orders Details
             </NavLink>
         </li>
+
+        <li class="nav-item px-3 ">
+            <NavLink class="nav-link" href="/inventorytransactions">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Inventory Transaction
+            </NavLink>
+        </li>
+        
+        <li class="nav-item px-3 ">
+            <NavLink class="nav-link" href="/inventorycoverage">
+                <span class="oi oi-list-rich" aria-hidden="true"></span> Inventory Covarage
+            </NavLink>
+        </li>
+
+        
+
+
+
+
+
         <li class="nav-item px-3 noBackground">
             <NavLink class="nav-link" href="customers">
                 <span class="oi oi-list-rich" aria-hidden="true"></span> Customers
@@ -52,15 +71,15 @@ BayanPOS*@
             </NavLink>
         </li>
         @*<div class="nav-item px-3 noBackground">
-            <NavLink class="nav-link" href="Ecommerce">
-                <span class="oi oi-list-rich" aria-hidden="true"></span> E-commerce
-            </NavLink>
+        <NavLink class="nav-link" href="Ecommerce">
+        <span class="oi oi-list-rich" aria-hidden="true"></span> E-commerce
+        </NavLink>
         </div>*@
     </nav>
- 
+
 </div>
 
- 
+
 
 @code {
     private bool collapseNavMenu = true;
@@ -68,6 +87,5 @@ BayanPOS*@
     private void ToggleNavMenu()
     {
         collapseNavMenu = !collapseNavMenu;
-       
     }
 }

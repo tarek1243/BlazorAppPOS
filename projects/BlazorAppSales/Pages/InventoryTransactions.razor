@@ -1,0 +1,103 @@
+﻿@page "/inventorytransactions"
+
+@using System.Linq
+@using BlazorAppSales.Data;
+@using ClassLibraryModels;
+@using Microsoft.EntityFrameworkCore
+
+<h3>Inventory Transactions</h3>
+
+<table style="  border-collapse:separate; ">
+    <thead>
+        <tr>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Transaction Date</th>
+            <th>Site</th>
+            <th>Warehouse</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var transaction in inventoryTransactions)
+        {
+            <tr class="m-3">
+                <td>
+                    @* <input type="text" @bind="@transaction.ProductId" class="form-control" />
+                *@
+                    <select @bind=@transaction.ProductId>
+                        @foreach (var item in ProductsAll)
+                        {
+                            <option value="@item.Id">@item.Name</option>
+                        }
+                    </select>
+                </td>
+                <td><input type="number" @bind="@transaction.Quantity" class="form-control" /></td>
+                <td><input type="date" @bind="@transaction.TransactionDate" class="form-control" /></td>
+                <td><input type="text" @bind="@transaction.SiteId" class="form-control" /></td>
+                <td><input type="text" @bind="@transaction.WarehouseId" class="form-control" /></td>
+                <td><button @onclick="() => RemoveTransaction(transaction)" class="form-control btn-close bg-danger"></button></td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<button @onclick="AddTransaction" class="btn alert-info">Add </button>
+<button @onclick="SaveTransactions" class="btn btn-success">Save </button>
+@inject AuthenticationStateProvider authenticationStateProvider
+
+@code {
+    private List<InventoryTransaction> inventoryTransactions;
+    private List<Product>? ProductsAll { get; set; }
+
+    ApplicationDbContext db_identity = new ApplicationDbContext();
+    WebApp1User currentUser;
+    protected override async Task OnInitializedAsync()
+    {
+        string currentUserEmail = await Util.ClassCurrentSessionUtil.GetUserEmail(authenticationStateProvider);
+
+        if (currentUserEmail != "")
+        {
+            currentUser = db_identity.Users.Where(u => u.Email == currentUserEmail).First();
+            using (var dbContext = new DbContextMainData()) // Replace with your EF Core DbContext
+            {
+                inventoryTransactions = dbContext.Pos_InventoryTransaction
+                .Where(x => x.CompanyName == currentUser.CompanyName)
+                .ToList();// new List<InventoryTransaction>();
+
+                //  var dbContextxx = new DbContextMainData();
+                ProductsAll = dbContext.Pos_Products.Where(p => p.CompanyName == currentUser.CompanyName).AsNoTracking().ToList();
+            }
+        }
+    }
+
+    private void AddTransaction()
+    {
+        InventoryTransaction inv_trans = new InventoryTransaction();
+        inv_trans.CompanyName = currentUser.CompanyName;
+        inv_trans.created_by_user_email = currentUser.Email;
+        inv_trans.TransactionDate = DateTime.Now;
+        inventoryTransactions.Add(inv_trans);
+    }
+
+    private void RemoveTransaction(InventoryTransaction transaction)
+    {
+        inventoryTransactions.Remove(transaction);
+    }
+    // DbContextMainData DbContext = new DbContextMainData();
+
+    private void SaveTransactions()
+    {
+        using (var dbContext = new DbContextMainData()) // Replace with your EF Core DbContext
+        {
+            foreach (var transaction in inventoryTransactions)
+            {
+                if (dbContext.Pos_InventoryTransaction.Entry(transaction).State == EntityState.Added)
+                    dbContext.Pos_InventoryTransaction.Add(transaction);
+                else if (dbContext.Pos_InventoryTransaction.Entry(transaction).State == EntityState.Modified)
+                    dbContext.Pos_InventoryTransaction.Update(transaction);
+            }
+            dbContext.SaveChanges();
+        }
+    }
+}
