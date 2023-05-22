@@ -35,6 +35,7 @@ dotnet ef migrations remove --context DbContextMainData
             if (!optionsBuilder.IsConfigured)
             {
                 optionsBuilder.UseSqlServer("Data Source=DESKTOP-H7EA1N4;Initial Catalog=blazorPos;Integrated Security=True;TrustServerCertificate=True");
+               // optionsBuilder.UseSqlServer("Data Source=atsqll.database.windows.net;Initial Catalog=NamaaBlazor;Persist Security Info=True;User ID=at;Password=xxxxx");
             }
         }
     }

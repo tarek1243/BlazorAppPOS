@@ -83,6 +83,12 @@
     private void RemoveTransaction(InventoryTransaction transaction)
     {
         inventoryTransactions.Remove(transaction);
+
+        using (var dbContext = new DbContextMainData()) // Replace with your EF Core DbContext
+            {dbContext.Pos_InventoryTransaction.Remove(transaction);
+                dbContext.SaveChanges();
+            }
+
     }
     // DbContextMainData DbContext = new DbContextMainData();
 

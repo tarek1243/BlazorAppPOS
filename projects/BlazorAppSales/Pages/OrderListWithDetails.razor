@@ -123,6 +123,7 @@
     {
         os.DeleteOrderAsync(order.Id);
         Orders = Orders.Where(o => o.Id != order.Id);
+
     }
     private void showShiftOrders(Shift shift)
     {

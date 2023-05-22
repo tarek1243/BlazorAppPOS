@@ -1,6 +1,6 @@
 ﻿@inherits LayoutComponentBase
 
-<PageTitle>BayanPOS</PageTitle>
+<PageTitle>@BlazorAppSales.Pages.About.systemName</PageTitle>
 
 <div class="page">
     <div class="sidebar">
@@ -10,7 +10,8 @@
     <main>
         <div class="top-row px-4 auth">
             <LoginDisplay />
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
+            @*<a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>*@
+            <a href="/About" target="_blank">About</a>
         </div>
 
         <article class="content px-4">
