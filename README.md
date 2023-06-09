@@ -12,6 +12,7 @@ Features
     Add, edit, and delete customers
     Process sales and generate receipts
     Manage user roles and permissions
+    Generate Invoice with QRCode , Compatable with ZATCA QR code requirments
 
 
 #Technologies Used
