@@ -186,7 +186,16 @@ namespace BlazorAppSales.Pages.General
 
             //var company = await DbContext.Companies.FindAsync(currentCompanyId);
             var company = await DbContext.Pos_Companies.Where(c => c.Name == currentCompanyName)
-                .FirstOrDefaultAsync();
+.FirstOrDefaultAsync();
+                if (company == null)
+            {
+                company = new Company { Name =currentCompanyName };
+
+                db.Pos_Companies.Add(company);
+                db.SaveChanges();
+            }
+
+                
             if (company == null)
                 company = await DbContext.Pos_Companies.FindAsync(defaultCompanyId);
 
@@ -196,7 +205,11 @@ namespace BlazorAppSales.Pages.General
                 .FirstOrDefaultAsync();
 
             if (companyInvoiceNumber == null)
+            {
+                companyInvoiceNumber = new CompanyInvoiceNumber { LastInvoiceNumber = 1, CompanyId = company.Id };
                 companyInvoiceNumber.LastInvoiceNumber = 1;
+
+            }
             else
                 companyInvoiceNumber.LastInvoiceNumber++;
 

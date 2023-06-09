@@ -103,7 +103,8 @@ else
                 Description = "",
                 ImageUrl = ""            ,
                 CompanyName = currentUser.CompanyName            ,
-                Number = ""
+                Number = "",
+                Barcode=""
             };
         await productService.CreateProductAsync(newProduct);
         products = await productService.GetProductsAsync(currentUser.CompanyName);

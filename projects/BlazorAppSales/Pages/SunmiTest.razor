@@ -1,0 +1,54 @@
+﻿@*@using SunmiPrinterHelper
+
+@inject IPrinterHelper Printer
+
+<button @onclick="PrintReceipt">Print Receipt</button>
+
+@code {
+    protected async Task PrintReceipt()
+    {
+        await Printer.StartPrintAsync();
+
+        await Printer.Alignment(SunmiPrinterHelper.Alignment.Center);
+        await Printer.FontSize(28);
+        await Printer.PrintTextAsync("ABC Store");
+        await Printer.PrintTextAsync("123 Main St.");
+        await Printer.PrintTextAsync("San Francisco, CA 94122");
+        await Printer.PrintTextAsync("");
+        await Printer.Alignment(SunmiPrinterHelper.Alignment.Left);
+
+        await Printer.FontSize(28);
+        await Printer.PrintTextAsync("Receipt");
+        await Printer.FontSize(20);
+        await Printer.PrintTextAsync("Date: 1/1/2020      Time: 12:34 PM");
+        await Printer.PrintTextAsync("Cashier: John Doe   #12345");
+        await Printer.PrintTextAsync("");
+
+        await Printer.FontSize(20);
+        await Printer.PrintColumnsAsync(new[]
+        {
+            new[] { "Item", "Qty", "Price" },
+            new[] { "Apples", "3lb", "$3.99/lb" },
+            new[] { "Bananas", "2lb", "$1.99/lb" }
+    });
+        await Printer.PrintTextAsync("");
+
+        await Printer.FontSize(20);
+        await Printer.PrintColumnsAsync(new[]
+        {
+            new[] { "Subtotal", "$11.97" },
+            new[] { "Tax", "$1.20"  },
+            new[] { "Total", "$13.17" }
+    });
+
+        await Printer.FontSize(24);
+        await Printer.PrintTextAsync("Thank you!");
+        await Printer.FontSize(16);
+        await Printer.PrintTextAsync("Please come again!");
+
+        await Printer.PrintTextAsync("");
+        await Printer.CutPaperAsync();
+
+        await Printer.EndPrintAsync();
+    }
+}*@
