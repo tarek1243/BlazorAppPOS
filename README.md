@@ -3,7 +3,7 @@
 
 
 This is an open source point of sale (POS) web application developed using C#, Blazor, EF Core, and SQL Server. The application is designed to help small business owners manage their sales and inventory efficiently. It is hosted on the Azure cloud platform.
-Features
+## Features
     User-friendly interface
     Fast and responsive
     Secure login and authentication using Microsoft Identity
@@ -13,33 +13,37 @@ Features
     Manage user roles and permissions
 
 
-#Technologies Used
+## Technologies Used
+
     C#
     Blazor
     EF Core
     SQL Server
     Azure
 
-#Requirements
+## Requirements
+
     Visual Studio 2019 or later
     .NET SDK 7.0 or later
     SQL Server Management Studio
 
-#Getting Started
+## Getting Started
+
     Clone the repository to your local machine.
     Open the solution file in Visual Studio.
     Restore the NuGet packages by right-clicking on the solution and selecting "Restore NuGet Packages".
     Update the connection string in the appsettings.json file with your own SQL Server instance.
     Run the application.
 
-#Contributing
+## Contributing
+
 I welcome contributions from the community. To contribute to this project, please follow these steps:
     Fork the repository.
     Create a new branch for your feature or bug fix.
     Make your changes and commit them to your branch.
     Create a pull request.
 
-#License
+## License
 
 This project is licensed under the MIT License. See the LICENSE.md file for details.
 Acknowledgements
