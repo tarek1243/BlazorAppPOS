@@ -10,89 +10,97 @@
 
 <h3>Customers</h3>
 
-<div>
-    <span style="float:right">
-        <button class="btn btn-primary" @onclick="() => SaveTransactions()">Save</button>
-        <button class="btn btn-success" @onclick="() => add()">Add</button>
-    </span>
 
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Group</th>
-                <th>Orders</th>
-                <th>Points</th>
-                <th>...</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var customer in customers)
-            {
-                <tr>
-                    <td>
-                        <input type="text" @bind-value="@customer.Name" class="form-control" />
-                    </td>
-                    <td>
-                        <input type="email" @bind-value="@customer.Email" class="form-control" />
-                    </td>
-                    <td>
-                        <input type="tel" @bind-value="@customer.Phone" class="form-control" />
-                    </td>
-                    <td>
-                        <input type="text" @bind-value="@customer.CustGroup" class="form-control" />
-                    </td>
-                    <td>
-                        @if (@customer.Orders.Count() == 0)
-                        {
-                            <button class="btn btn-danger btn-sm" @onclick="() => Delete(customer)">
-                                <i class="bi bi-trash">X</i>
-                            </button>
-                        }
-                        else
-                        {
-                            @customer.Orders.Count()
-                        }
-                    </td>
+<AuthorizeView>
+    <Authorized>
+        <div>
+            <span style="float:right">
+                <button class="btn btn-primary" @onclick="() => SaveTransactions()">Save</button>
+                <button class="btn btn-success" @onclick="() => add()">Add</button>
+            </span>
 
-
-                    <td>
-                        <input type="text" disabled @bind-value="@customer.LoyaltyPoints" class="form-control" />
-                    </td>
-                    <td>
-                        <button class="btn btn-primary" @onclick="() =>  customer.ShowLines=!customer.ShowLines ">
-                            @if (customer.ShowLines)
-                            {
-                                <span>-</span>
-                            }
-                            else
-                            {
-                                <span>+</span>
-                            }
-                        </button>
-                    </td>
-                </tr>
-
-                @if (customer.ShowLines)
-                {
-                    @if (customer.Orders.Count > 0)
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Group</th>
+                        <th>Orders</th>
+                        <th>Points</th>
+                        <th>...</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in customers)
                     {
                         <tr>
-                            <td colspan="10">
-                                <BlazorAppSales.Pages.Components.ListOfOrdersComponent orders=customer.Orders></BlazorAppSales.Pages.Components.ListOfOrdersComponent>
+                            <td>
+                                <input type="text" @bind-value="@customer.Name" class="form-control" />
+                            </td>
+                            <td>
+                                <input type="email" @bind-value="@customer.Email" class="form-control" />
+                            </td>
+                            <td>
+                                <input type="tel" @bind-value="@customer.Phone" class="form-control" />
+                            </td>
+                            <td>
+                                <input type="text" @bind-value="@customer.CustGroup" class="form-control" />
+                            </td>
+                            <td>
+                                @if (@customer.Orders.Count() == 0)
+                                {
+                                    <button class="btn btn-danger btn-sm" @onclick="() => Delete(customer)">
+                                        <i class="bi bi-trash">X</i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    @customer.Orders.Count()
+                                }
+                            </td>
 
+
+                            <td>
+                                <input type="text" disabled @bind-value="@customer.LoyaltyPoints" class="form-control" />
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" @onclick="() =>  customer.ShowLines=!customer.ShowLines ">
+                                    @if (customer.ShowLines)
+                                    {
+                                        <span>-</span>
+                                    }
+                                    else
+                                    {
+                                        <span>+</span>
+                                    }
+                                </button>
                             </td>
                         </tr>
+
+                        @if (customer.ShowLines)
+                        {
+                            @if (customer.Orders.Count > 0)
+                            {
+                                <tr>
+                                    <td colspan="10">
+                                        <BlazorAppSales.Pages.Components.ListOfOrdersComponent orders=customer.Orders></BlazorAppSales.Pages.Components.ListOfOrdersComponent>
+
+                                    </td>
+                                </tr>
+                            }
+                        }
                     }
-                }
-            }
-        </tbody>
-    </table>
-</div>
+                </tbody>
+            </table>
+        </div>
 
 
+    </Authorized>
+    <NotAuthorized>
+        <BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent></BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent>
+    </NotAuthorized>
+</AuthorizeView>
 
 @code {
 

@@ -9,163 +9,171 @@
 @inject IJSRuntime JsRuntime
 @inject AuthenticationStateProvider authenticationStateProvider
 
-@*<h1>POS SA</h1>*@
+<AuthorizeView>
+    <Authorized>
 
-@if (!ShiftIsOpen)
-{
-    <button class="btn btn-primary" @onclick="OpenShift">Open Shift</button>
-}
-else
-{
-    <button class="btn btn-primary" @onclick="CloseShift">Close Shift</button>
-}
+        @if (!ShiftIsOpen)
+        {
+            <button class="btn btn-primary" @onclick="OpenShift">Open Shift</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" @onclick="CloseShift">Close Shift</button>
+        }
 
-@if (ShiftIsOpen)
-{
-    <div class="row" style="border: 1px solid black; overflow: auto;">
-        @*nain panel*@
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-body" style=" overflow: auto;">
-                    <div class="row">
-                        <div class="col-md-8">
-                            @*<h4>Products</h4>*@
-                            <input type="text" class="form-control" placeholder="Search product name or number" @bind="@searchQuery_item"
-                               @oninput="(e)=> searchQuery_item = e.Value.ToString()"
-                               @onkeydown="Search" />
+        @if (ShiftIsOpen)
+        {
+            <div class="row" style="border: 1px solid black; overflow: auto;">
+                @*nain panel*@
+                <div class="col-md-8">
+                    <div class="card">
+                        <div class="card-body" style=" overflow: auto;">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    @*<h4>Products</h4>*@
+                                    <input type="text" class="form-control" placeholder="Search product name or number" @bind="@searchQuery_item"
+                                    @oninput="(e)=> searchQuery_item = e.Value.ToString()"
+                                    @onkeydown="Search" />
 
-                            <div class="radio-group">
+                                    <div class="radio-group">
 
-                                @foreach (var tag_name_str in productTags)
-                                {
-                             @*       <label>
-                                        <input type="radio" name="option" value="@tag_name_str"
-                                       @onchange="(()=>OnChange_selectedTagFilter(tag_name_str))">
-                                        <span class=" badge p-1 "> &nbsp; &nbsp; @tag_name_str</span>
+                                        @foreach (var tag_name_str in productTags)
+                                        {
+                                            @*       <label>
+                                    <input type="radio" name="option" value="@tag_name_str"
+                                    @onchange="(()=>OnChange_selectedTagFilter(tag_name_str))">
+                                    <span class=" badge p-1 "> &nbsp; &nbsp; @tag_name_str</span>
                                     </label>*@
-                                    @if (selectedTagFilter == tag_name_str)
-                                    {
-                                        <h3 class="rounded  bg-dark m-2 centered " @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))"><span class="badge badge-secondary">@tag_name_str</span></h3>
-                                    }
-                                    else
-                                    {
-                                        <h4 class=" rounded bg-warning m-2 centered " @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))"><span class="badge badge-secondary">@tag_name_str</span></h4>
+                                            @if (selectedTagFilter == tag_name_str)
+                                            {
+                                                <h3 class="rounded  bg-dark m-2 centered " @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))"><span class="badge badge-secondary">@tag_name_str</span></h3>
+                                            }
+                                            else
+                                            {
+                                                <h4 class=" rounded bg-warning m-2 centered " @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))"><span class="badge badge-secondary">@tag_name_str</span></h4>
 
-                                        @*<h4 class=" badge bg-warning" @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))">@tag_name_str</h4>*@
-                                    }
-                                }
-                            </div>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        @*<th></th>*@
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (Products != null)
-                                        @foreach (var product in Products)
-                                        {
-                                            <BlazorAppSales.Pages.Components.ProductPOSSelectComponent product="product"
-                                                                                           OnAddToCart="(()=>AddToCart(product))">
-
-                                            </BlazorAppSales.Pages.Components.ProductPOSSelectComponent>
-
+                                                @*<h4 class=" badge bg-warning" @onclick="(()=>OnChange_selectedTagFilter(tag_name_str))">@tag_name_str</h4>*@
+                                            }
                                         }
-                                </tbody>
-                            </table>
-                        </div>
-                        <div class="col-md-4">
-                            <h4>Order</h4>
-                            <table class="table table-striped">
-                                <thead>
-                                    <tr>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th></th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @if (orderLines != null)
-                                        @foreach (var orderLine in orderLines)
-                                        {
-                                            <BlazorAppSales.Pages.Components.OrderLineCartComponent ol="orderLine"
-                                                                                        OnDeleteOrderLine=DeleteOrderLine
-                                                                                        OnNeedRecalc=calc_total
-                                                                                        OnCreateSupplementary=CreateSupplementary></BlazorAppSales.Pages.Components.OrderLineCartComponent>
+                                    </div>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Price</th>
+                                                @*<th></th>*@
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (Products != null)
+                                                @foreach (var product in Products)
+                                                {
+                                                    <BlazorAppSales.Pages.Components.ProductPOSSelectComponent product="product"
+                                                                                                               OnAddToCart="(()=>AddToCart(product))">
 
-                                        }
-                                    <tr>
-                                        <td colspan="3">Total</td>
-                                        <td>@Total.ToString("C")</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                                    </BlazorAppSales.Pages.Components.ProductPOSSelectComponent>
 
-                            <BlazorAppSales.Pages.Components.PaymentButtonsComponent pos_OrderPayments=pos_OrderPayments
-                                                                                 order_total="orderLines.Sum(x => x.Total)"
-                                                                                 pos_MethodOfPayments="pos_MethodOfPayments"
-                                                                                 @ref=PaymentButtonsComponent1>
-                            </BlazorAppSales.Pages.Components.PaymentButtonsComponent>
-                            @*   temppppp     *@
-                            <div class="form-group">
-                                <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1, GetOrders()))" disabled="@(!orderLines.Any() || ShiftClosed)">Place Order</button>
-                            </div>
-
-                            @if (ShiftClosed)
-                            {
-                                <div class="alert alert-warning" role="alert">
-                                    Shift is closed. Open a new shift to place orders.
+                                                }
+                                        </tbody>
+                                    </table>
                                 </div>
+                                <div class="col-md-4">
+                                    <h4>Order</h4>
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Price</th>
+                                                <th>Quantity</th>
+                                                <th>Total</th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @if (orderLines != null)
+                                                @foreach (var orderLine in orderLines)
+                                                {
+                                                    <BlazorAppSales.Pages.Components.OrderLineCartComponent ol="orderLine"
+                                                                                                            OnDeleteOrderLine=DeleteOrderLine
+                                                                                                            OnNeedRecalc=calc_total
+                                                                                                            OnCreateSupplementary=CreateSupplementary></BlazorAppSales.Pages.Components.OrderLineCartComponent>
+
+                                                }
+                                            <tr>
+                                                <td colspan="3">Total</td>
+                                                <td>@Total.ToString("C")</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+
+                                    <BlazorAppSales.Pages.Components.PaymentButtonsComponent pos_OrderPayments=pos_OrderPayments
+                                                                                             order_total="orderLines.Sum(x => x.Total)"
+                                                                                             pos_MethodOfPayments="pos_MethodOfPayments"
+                                    @ref=PaymentButtonsComponent1>
+                                    </BlazorAppSales.Pages.Components.PaymentButtonsComponent>
+                                    @*   temppppp     *@
+                                    <div class="form-group">
+                                        <button class="btn btn-primary" @onclick="(()=>PlaceOrder(orderPage1, GetOrders()))" disabled="@(!orderLines.Any() || ShiftClosed)">Place Order</button>
+                                    </div>
+
+                                    @if (ShiftClosed)
+                                    {
+                                        <div class="alert alert-warning" role="alert">
+                                            Shift is closed. Open a new shift to place orders.
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                            <div id="summary-report" style="display:none">
+                                <h2>Summary Report</h2>
+                                <table class="table table-striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Period</th>
+                                            <th>Total Sales</th>
+                                            <th>Total Orders</th>
+                                            <th>Average Sale</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Shift</td>
+                                            <td>@ShiftTotalSales.ToString("C")</td>
+                                            <td>@ShiftTotalOrders</td>
+                                            <td>@ShiftAverageSale.ToString("C")</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <CustomerSelector current_companyName="@currentUser.CompanyName" Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
+                        </div>
+                    </div>
+                </div>
+
+                @*receipt*@
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <!-- Summary and other information here -->
+                            @*  <OrderReceipt order="CurrentOrder" onClose="@(() => ShowReceipt = false)" />*@
+                            @if (CurrentOrder != null)
+                            {
+                                <OrderPage order="CurrentOrder" onClose="@(() => ShowReceipt = false)"
+                                @ref="orderPage1" />
                             }
                         </div>
                     </div>
-                    <div id="summary-report" style="display:none">
-                        <h2>Summary Report</h2>
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th>Period</th>
-                                    <th>Total Sales</th>
-                                    <th>Total Orders</th>
-                                    <th>Average Sale</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>Shift</td>
-                                    <td>@ShiftTotalSales.ToString("C")</td>
-                                    <td>@ShiftTotalOrders</td>
-                                    <td>@ShiftAverageSale.ToString("C")</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <CustomerSelector current_companyName="@currentUser.CompanyName" Customers_full="@customers" OnNewCustomerCreated="@CreateCustomer" OnCustomerSelected="CustomerSelected"></CustomerSelector>
                 </div>
             </div>
-        </div>
+        }
 
-        @*receipt*@
-        <div class="col-md-4">
-            <div class="card">
-                <div class="card-body">
-                    <!-- Summary and other information here -->
-                    @*  <OrderReceipt order="CurrentOrder" onClose="@(() => ShowReceipt = false)" />*@
-                    @if (CurrentOrder != null)
-                    {
-                        <OrderPage order="CurrentOrder" onClose="@(() => ShowReceipt = false)"
-                           @ref="orderPage1" />
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
-}
+
+    </Authorized>
+    <NotAuthorized>
+        <BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent></BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent>
+    </NotAuthorized>
+</AuthorizeView>
 
 
 @code {

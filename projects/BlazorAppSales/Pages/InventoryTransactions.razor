@@ -4,47 +4,65 @@
 @using BlazorAppSales.Data;
 @using ClassLibraryModels;
 @using Microsoft.EntityFrameworkCore
+@inject AuthenticationStateProvider authenticationStateProvider
+
+
 
 <h3>Inventory Transactions</h3>
 
-<table style="  border-collapse:separate; ">
-    <thead>
-        <tr>
-            <th>Product</th>
-            <th>Quantity</th>
-            <th>Transaction Date</th>
-            <th>Site</th>
-            <th>Warehouse</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var transaction in inventoryTransactions)
-        {
-            <tr class="m-3">
-                <td>
-                    @* <input type="text" @bind="@transaction.ProductId" class="form-control" />
-                *@
-                    <select @bind=@transaction.ProductId>
-                        @foreach (var item in ProductsAll)
-                        {
-                            <option value="@item.Id">@item.Name</option>
-                        }
-                    </select>
-                </td>
-                <td><input type="number" @bind="@transaction.Quantity" class="form-control" /></td>
-                <td><input type="date" @bind="@transaction.TransactionDate" class="form-control" /></td>
-                <td><input type="text" @bind="@transaction.SiteId" class="form-control" /></td>
-                <td><input type="text" @bind="@transaction.WarehouseId" class="form-control" /></td>
-                <td><button @onclick="() => RemoveTransaction(transaction)" class="form-control btn-close bg-danger"></button></td>
-            </tr>
-        }
-    </tbody>
-</table>
+<AuthorizeView>
+    <Authorized>
 
-<button @onclick="AddTransaction" class="btn alert-info">Add </button>
-<button @onclick="SaveTransactions" class="btn btn-success">Save </button>
-@inject AuthenticationStateProvider authenticationStateProvider
+
+
+        <table style="  border-collapse:separate; ">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Transaction Date</th>
+                    <th>Site</th>
+                    <th>Warehouse</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (inventoryTransactions != null)
+                @foreach (var transaction in inventoryTransactions)
+                {
+                    <tr class="m-3">
+                        <td>
+                            @* <input type="text" @bind="@transaction.ProductId" class="form-control" />
+                        *@
+                            <select @bind=@transaction.ProductId>
+                                @foreach (var item in ProductsAll)
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+                                }
+                            </select>
+                        </td>
+                        <td><input type="number" @bind="@transaction.Quantity" class="form-control" /></td>
+                        <td><input type="date" @bind="@transaction.TransactionDate" class="form-control" /></td>
+                        <td><input type="text" @bind="@transaction.SiteId" class="form-control" /></td>
+                        <td><input type="text" @bind="@transaction.WarehouseId" class="form-control" /></td>
+                        <td><button @onclick="() => RemoveTransaction(transaction)" class="form-control btn-close bg-danger"></button></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <button @onclick="AddTransaction" class="btn alert-info">Add </button>
+        <button @onclick="SaveTransactions" class="btn btn-success">Save </button>
+
+    </Authorized>
+    <NotAuthorized>
+        <BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent></BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent>
+    </NotAuthorized>
+</AuthorizeView>
+
+
+
+
 
 @code {
     private List<InventoryTransaction> inventoryTransactions;

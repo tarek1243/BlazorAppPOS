@@ -6,41 +6,50 @@
 
 <h3>Inventory Coverage</h3>
 
-<div>
-    <label for="fromDate">From:</label>
-    <input type="date" id="fromDate" @bind="fromDate" />
-    <label for="toDate">To:</label>
-    <input type="date" id="toDate" @bind="toDate" />
-    <button @onclick="FilterSales">Filter</button>
-</div>
+<AuthorizeView>
+    <Authorized>
 
-@if (inventoryCoverages != null)
-{
-    <table>
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Inventory Quantity</th>
-                <th>Sales Quantity</th>
-                <th>Coverage (Days)</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var coverage in inventoryCoverages)
-            {
-                <tr>
-                    <td>@coverage.Product.Name</td>
-                    <td>@coverage.InventoryQuantity</td>
-                    <td>@coverage.SalesQuantity</td>
-                    <td>@coverage.CoverageDays</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+        <div>
+            <label for="fromDate">From:</label>
+            <input type="date" id="fromDate" @bind="fromDate" />
+            <label for="toDate">To:</label>
+            <input type="date" id="toDate" @bind="toDate" />
+            <button @onclick="FilterSales">Filter</button>
+        </div>
+
+        @if (inventoryCoverages != null)
+        {
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product</th>
+                        <th>Inventory Quantity</th>
+                        <th>Sales Quantity</th>
+                        <th>Coverage (Days)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var coverage in inventoryCoverages)
+                    {
+                        <tr>
+                            <td>@coverage.Product.Name</td>
+                            <td>@coverage.InventoryQuantity</td>
+                            <td>@coverage.SalesQuantity</td>
+                            <td>@coverage.CoverageDays</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
 
 
-@*<p>sql</p>*@
+    </Authorized>
+    <NotAuthorized>
+        <BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent></BlazorAppSales.Pages.Components.LogInRegisterBigBoxsComponent>
+    </NotAuthorized>
+</AuthorizeView>
+
+
 
 @code {
     private List<InventoryCoverageClass> inventoryCoverages;
