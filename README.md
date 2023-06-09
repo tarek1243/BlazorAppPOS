@@ -1,6 +1,6 @@
-# BlazorAppPOS
+# BlazorAppPOS  , POS Web Application
 
-POS Web Application
+
 
 This is an open source point of sale (POS) web application developed using C#, Blazor, EF Core, and SQL Server. The application is designed to help small business owners manage their sales and inventory efficiently. It is hosted on the Azure cloud platform.
 Features
@@ -12,9 +12,9 @@ Features
     Add, edit, and delete customers
     Process sales and generate receipts
     Manage user roles and permissions
-    Export sales data to CSV format
 
-Technologies Used
+
+#Technologies Used
 
     C#
     Blazor
@@ -22,13 +22,13 @@ Technologies Used
     SQL Server
     Azure
 
-Requirements
+#Requirements
 
     Visual Studio 2019 or later
     .NET SDK 5.0 or later
     SQL Server Management Studio
 
-Getting Started
+#Getting Started
 
     Clone the repository to your local machine.
     Open the solution file in Visual Studio.
@@ -36,16 +36,16 @@ Getting Started
     Update the connection string in the appsettings.json file with your own SQL Server instance.
     Run the application.
 
-Contributing
+#Contributing
 
-We welcome contributions from the community. To contribute to this project, please follow these steps:
+I welcome contributions from the community. To contribute to this project, please follow these steps:
 
     Fork the repository.
     Create a new branch for your feature or bug fix.
     Make your changes and commit them to your branch.
     Create a pull request.
 
-License
+#License
 
 This project is licensed under the MIT License. See the LICENSE.md file for details.
 Acknowledgements
